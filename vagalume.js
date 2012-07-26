@@ -1,8 +1,6 @@
 ﻿var vagalume = (function () {
     var urlmodule = (function () {
         var forEachKey = (function () {
-            console.log('keys');
-            console.log(Object.keys);
             if (Object.keys) {
                 return function (obj, fn) {
                     if (typeof obj === 'object') {
