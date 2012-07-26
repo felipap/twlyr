@@ -15,9 +15,40 @@
 				selected[i].classList.remove('selected')
 		}
 
+		, getRangeSorted: function ( a, b ) {
+			var words = Array.prototype.slice.call(document.querySelectorAll('.word')),
+				verses = document.querySelector(".verse"),
+				selection = []
+
+			if (words.indexOf(a) < words.indexOf(b))
+				var first = a, last = b
+			else
+				var first = b, last = a
+
+			getRange(first, last)
+
+		}
 		, getRange: function ( a, b ) {
 			// return the list of words between (an including) A and B
 
+			
+			if (!a || !b)
+				return []
+			
+			words = Array.prototype.slice.call(document.querySelectorAll('.word'))
+			ia = words.indexOf(a)
+			ib = words.indexOf(b)
+			
+			if (ia < ib)
+				var first = ia, last = ib
+			else if (ia > ib)
+				var first = ib, last = ia
+			else // ia === ib
+				return [a]
+
+			return words.slice(first, last+1)
+
+			
 			var w = document.querySelectorAll('.word'),
 				selection = [],
 				last = null // the item that come at last
@@ -52,7 +83,7 @@
 		, getSelectionEnds: function ( actual ) {
 			// returns the extreme words in current selection process.
 			// optional argument 'actual', to be used instead of
-			// 'hoverWord' as the other extreme other than 'endWord'
+			// 'endWord'. this is essential when only one word is selected.
 			if ((!hoverWord && !actual) || !endWord) {
 				// if not in selection process, try to get selected words.
 				// Selector.is what works when words are selected by no longer
@@ -60,7 +91,7 @@
 				var w = document.querySelectorAll('.word.selected')
 				return [w[0], w[w.length-1]]
 			}
-			return [actual || hoverWord, endWord]
+			return [hoverWord, actual || endWord]
 		}
 
 		// put outside Selector?
@@ -69,6 +100,7 @@
 			var txt = ""
 				, w = Selector.getRange.apply(null, Selector.getSelectionEnds())
 			
+			console.log('words selected:', w)
 			for (var i=0; i<w.length; i++) {
 				txt += w[i].innerHTML + " "
 			}
@@ -128,7 +160,7 @@
 			// fire mouseover event to start selection of the current word
 			// otherwise it'll wait until the mouse goes over another word.
 			var e = document.createEvent("MouseEvents");
-			e.initMouseEvent("mouseover", true, true)
+			e.initMouseEvent("mouseover")
 			hoverWord.dispatchEvent(e)
 		}
 			
