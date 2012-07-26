@@ -3,7 +3,6 @@
 // TODO:
 // compatibility issues for using elm.classList?
 
-
 (function (window, document, undefined) {
 	
 	window.Selector = {
@@ -109,7 +108,9 @@
 		}
 	};
 
-	mouseDown = false
+	mouseDown = false // mouse starts unclicked
+	endWord = null // the first word of a selection process, default to null
+	hoverWord = null // the actual word being hovered, default to null
 	
 	document.onmousedown = function ( e ) {
 		if (e.button != 0)
@@ -139,10 +140,5 @@
 		endWord = hoverWord = null
 		Selector.updateTweetBox()
 	}
-
-	
-	endWord = null // the first word of a selection process, default to null
-	hoverWord = null // the actual word being hovered, default to null
-	
 
 })(window, window.document);
