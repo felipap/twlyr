@@ -73,7 +73,7 @@
 		line-height: 19px;
 		font-size: 16px;
 		padding: 9px;
-		width: 400px;
+		width: 200px;
 		box-shadow: none;
 	}
 
@@ -111,7 +111,8 @@
 		<h2>Search a song</h2>
 		<div id="searchbar">
 			<form class="form-search">
-				<input type="text" placeholder="search a song..." class="input-medium search-query">
+				<input type="text" placeholder="artist name" class="input-medium search-query" id="search-artist">
+				<input type="text" placeholder="music name" class="input-medium search-query" id="search-music">
 				<button type="submit" class="btn btn-success btn-large">Search</button>
 			</form>
 		</div>
@@ -151,17 +152,6 @@ function updateTweetCounter () {
 
 })();
 
-
-vagalume.musicInfoFromName('Coldplay', 'The Scientist',
-	function () {
-		console.log('oncaptcha', arguments)
-	}, function (data) {
-		d = data
-		m = d.music[0]
-		writeLyrics(m.lyrics)
-	}
-)
-
 function writeLyrics (text) {
 
 	var verses = text.split('\n\n'),
@@ -198,6 +188,19 @@ function writeLyrics (text) {
 	Selector.addSelectionEvent()
 }
 
+$('#searchbar form').submit(function () {
+	vagalume.musicInfoFromName(
+	$('#search-artist').val(),
+	$('#search-music').val(),
+	function () {
+		console.log('oncaptcha', arguments)
+	}, function (data) {
+		d = data
+		m = d.music[0]
+		writeLyrics(m.lyrics)
+	});
+	return false;
+});
 
 </script>
 </body>
