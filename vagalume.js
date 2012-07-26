@@ -1,7 +1,4 @@
-﻿
-// bicha bicha
-
-var vagalume = (function () {
+﻿var vagalume = (function () {
     var splitUrl = function (url) {
         var tmp = url.split('?');
         
@@ -55,11 +52,60 @@ var vagalume = (function () {
 
         return joinUrl(baseUrl, paramsUrl, remainUrl);
     };
+    var urlParse = function (url) {
+        var obj = {};
+        var params = '';
+        
+        if (typeof url !== 'string' || url.length === 0)
+            return obj;
+            
+        url = url.split('?');
+        obj.url = url[0];
+        obj.params = {};
+        if (url.length >= 1) {
+            params = url.slice(1).join('?');
+            
+            url = url[1].split('#');
+        } else
+            url = url[0].split('#');
+            
+        if (url.length >= 1)
+            obj.rest = url.slice(1).join('#');
+        
+        if (params.length === 0)
+            return obj;
+        
+        params = params.split('&');
+        
+        for (var i = 0; i < params.length; i++) {
+            url = params[i].split('=');
+            if (url.length >= 2) {
+                var k = url[0];
+                var v = url.slice(1).join('=');
+                
+                try {
+                    k = decodeURIComponent(k);
+                } catch (e) {
+                    k = decode(k);
+                }
+                try {
+                    v = decodeURIComponent(v);
+                } catch (e) {
+                    v = decode(v);
+                }
+                
+                if (!obj.params[k] && k.length !== 0 && v.length !== 0)
+                    obj.params[k] = v;
+            }
+        }
+        
+        return obj;
+    };
     var doQueryCaptcha = function (query, onCaptcha, onData) {
         function onPreData(data) {
-            console.log(data);
             if (data && data.captcha) {
                 onCaptcha(data.url, function (input) {
+                    // FIX ME: This parses two times. This is bad.
                     query = changeQueryString(query, 'serial', data.serial);
                     query = changeQueryString(query, 'udig', input);
                     onPreData(query, onPreData);
@@ -70,9 +116,10 @@ var vagalume = (function () {
         $.getJSON(query, onPreData);
     };
     var _processMusicInfoData = function (data, onEnd) {
-        if (!data.type || data.type == 'notfound')
+        if (!data || !data.type || data.type === 'notfound' ||
+            !data.art || !data.mus || data.mus.length <= 0)
             onEnd({});
-        else if (data.type == 'song_notfound') {
+        else if (data.type === 'song_notfound') {
             var obj = {
                 artist: {
                     url: data.art.url,
@@ -82,29 +129,31 @@ var vagalume = (function () {
             
             onEnd(obj);
         } else {
-            if (!data.mus[0])
-                onEnd({});
-            
             var obj = {
+                match: (data.type === 'exact'),
                 artist: {
                     name: data.art.name,
                 },
-                music: {
-                    name: data.mus[0].name,
-                    lyrics: data.mus[0].text,
-                    youtubeId: data.mus[0].ytid,
-                },
+                music: [],
             }
             
-            if (data.alb) {
-                obj.album = {
-                    name: data.alb.name,
-                    year: data.alb.year,
-                    imageUrl: data.alb.img,
+            for (var i = 0; i < data.mus.length; i++) {
+                var music = {
+                    name: data.mus[i].name,
+                    lyrics: data.mus[i].text,
+                    youtubeId: data.mus[i].ytid,
+                };
+                if (data.mus[i].alb) {
+                    music.album = {
+                        name: data.mus[i].alb.name,
+                        year: data.mus[i].alb.year,
+                        imageUrl: data.mus[i].alb.img,
+                    };
                 }
+                obj.music.push(music);
             }
            
-           onEnd(obj);
+            onEnd(obj);
         }
     };
     return {
