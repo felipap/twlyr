@@ -1,5 +1,5 @@
 ﻿
-// bicha
+// bicha bicha
 
 var vagalume = (function () {
     var splitUrl = function (url) {
