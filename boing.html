@@ -24,11 +24,16 @@
 		color: white;
 	}
 
+	.lyrics {
+		outline: 1px solid black;
+	}
+
 </style>
 
 </head>
 <body>
 
+<div class="lyrics">
 	<div class="verse">
 		<div class='line'>
 			<span class='word'>Nobody</span>
@@ -75,6 +80,7 @@
 			<span class='word'>start</span>
 		</div>
 	</div>
+</div>
 
 	<textarea id="message">
 	</textarea>
@@ -121,7 +127,6 @@ function selectRange ( a, b ) {
 	var w = getRange(a, b)
 	for (var i=0; i<w.length; i++)
 		w[i].classList.add('selected')
-	
 	if (!w[0])
 		throw Error('no range selected!')
 }
@@ -149,17 +154,23 @@ function updateTweetBox () {
 		txt += w[i].innerHTML + " "
 	}
 
-	document.querySelector('textarea#message').value = txt
+	document.querySelector('textarea#message').value = 'a'+txt
 }
 
 (function () {
 
 	mouseDown = 0
-	document.onmousedown = function () {
-		++mouseDown
+	var lyrics = document.querySelector(".lyrics")
+	document.onmousedown = function ( e ) {
+		
+		if (e.button != 0)
+			return
+
+		mouseDown = 1
+		console.log(">> mousedown!", e)
 		// try to unselect possibly selected words
 		unselectWords()
-		
+		// console.log("hoverWord:", hoverWord, "endWord:", endWord);
 		if (hoverWord) {
 			// cursor is ALREADY above a word
 			// fire mouseover event to start selection of the current word
@@ -170,17 +181,24 @@ function updateTweetBox () {
 		}
 			
 	}
-	document.onmouseup = function () {
-		--mouseDown
-		endWord = null // reset extreme
-		hoverWord = null
+
+	document.onmouseup = function ( e ) {
+		
+		if (e.button != 0)
+			return
+		
+		mouseDown = 0
+		console.log(">> mouseup", e)
+		// console.log("hoverWord:", hoverWord, "endWord:", endWord);
+		endWord = hoverWord = null
 		updateTweetBox()
+		
 	}
 
 	// for words only!
 	var mouseover = function ( e ) {
 
-		console.log('mouse over: '+e.target.innerHTML)
+		// console.log('mouse over: '+e.target.innerHTML)
 		hoverWord = e.target;
 
 		if (!mouseDown)
