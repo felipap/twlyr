@@ -73,7 +73,8 @@
 				txt += w[i].innerHTML + " "
 			}
 
-			document.querySelector('textarea#message').value = txt
+			document.querySelector('textarea#tweet').value = txt
+			updateTweetCounter()
 		}
 
 		, addSelectionEvent: function ( words ) {
@@ -85,6 +86,8 @@
 
 				if (!mouseDown)
 					return
+		
+				Selector.updateTweetBox()
 
 				if (!endWord)
 					// cursor, after clicked, moved over to a word.
@@ -118,9 +121,9 @@
 
 		console.log(">> mousedown!", e)
 		mouseDown = true
-		Selector.unselectWords() // try to unselect possibly selected words
 		
 		if (hoverWord) {
+			Selector.unselectWords() // try to unselect possibly selected words
 			// cursor is ALREADY above a word (so select it right away)
 			// fire mouseover event to start selection of the current word
 			// otherwise it'll wait until the mouse goes over another word.
@@ -138,7 +141,6 @@
 		console.log(">> mouseup", e)
 		mouseDown = false
 		endWord = hoverWord = null
-		Selector.updateTweetBox()
 	}
 
 })(window, window.document);

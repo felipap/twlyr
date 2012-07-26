@@ -19,7 +19,6 @@
 	.verse {
 		font: 15px "Open Sans", Arial;
 
-		outline: 1px solid #444;
 		display: table;
 		padding: 10px;
 	}
@@ -39,9 +38,67 @@
 	}
 
 	.lyrics {
+		float: right;
 		-webkit-user-select: none;
-		outline: 1px solid black;
+		outline: 1px solid #ddd;
 	}
+
+	#searchbar {
+		display: table;
+		margin: 0 auto;
+
+		min-height: 20px;
+		padding: 19px;
+		margin-bottom: 20px;
+		
+		background-color: whiteSmoke;
+		
+		border: 1px solid #EEE;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		
+		-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+	}
+
+	#searchbar form {
+		margin: 0;
+	}
+
+	#searchbar input[type=text] {
+		line-height: 19px;
+		font-size: 16px;
+		padding: 9px;
+		width: 400px;
+		box-shadow: none;
+	}
+
+	#searchbar input[type=text]:hover {
+		border-color: #08C;
+		text-shadow: none;
+	}
+
+	#searchbar button {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		border-top-right-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	textarea#tweet {
+		width: 350px;
+		font-size: 16px;
+		height: 70px;
+	}
+
+	.twtcounter.larger {
+		color: red;
+	}
+
 
 </style>
 
@@ -52,118 +109,96 @@
 	
 	<div>
 		<h2>Search a song</h2>
-		<form class="well form-search">
-			<input type="text" class="input-medium search-query">
-			<button type="submit" class="btn">Search</button>
-		</form>
+		<div id="searchbar">
+			<form class="form-search">
+				<input type="text" placeholder="search a song..." class="input-medium search-query">
+				<button type="submit" class="btn btn-success btn-large">Search</button>
+			</form>
+		</div>
 	</div>
 
 	<div class="lyrics">
-		<div class="verse">
-			<div class='line'>
-				<span class='word'>Nobody</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>was</span>
-				<span class='word'>easy</span>
-			</div>
-			<div class='line'>
-				<span class='word'>It's</span>
-				<span class='word'>such</span>
-				<span class='word'>a</span>
-				<span class='word'>shame</span>
-				<span class='word'>for</span>
-				<span class='word'>us</span>
-				<span class='word'>to</span>
-				<span class='word'>part</span>
-			</div>
-			<div class='line'>
-				<span class='word'>Nobody</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>was</span>
-				<span class='word'>easy</span>
-			</div>
-			<div class='line'>
-				<span class='word'>No</span>
-				<span class='word'>one</span>
-				<span class='word'>ever</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>would</span>
-				<span class='word'>be</span>
-				<span class='word'>this</span>
-				<span class='word'>hard</span>
-			</div>
-			<div class='line'>
-				<span class='word'>Oh</span>
-				<span class='word'>take</span>
-				<span class='word'>me</span>
-				<span class='word'>back</span>
-				<span class='word'>to</span>
-				<span class='word'>the</span>
-				<span class='word'>start</span>
-			</div>
-		</div>
-
-		<div class="verse">
-			<div class='line'>
-				<span class='word'>Nobody</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>was</span>
-				<span class='word'>easy</span>
-			</div>
-			<div class='line'>
-				<span class='word'>It's</span>
-				<span class='word'>such</span>
-				<span class='word'>a</span>
-				<span class='word'>shame</span>
-				<span class='word'>for</span>
-				<span class='word'>us</span>
-				<span class='word'>to</span>
-				<span class='word'>part</span>
-			</div>
-			<div class='line'>
-				<span class='word'>Nobody</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>was</span>
-				<span class='word'>easy</span>
-			</div>
-			<div class='line'>
-				<span class='word'>No</span>
-				<span class='word'>one</span>
-				<span class='word'>ever</span>
-				<span class='word'>said</span>
-				<span class='word'>it</span>
-				<span class='word'>would</span>
-				<span class='word'>be</span>
-				<span class='word'>this</span>
-				<span class='word'>hard</span>
-			</div>
-			<div class='line'>
-				<span class='word'>Oh</span>
-				<span class='word'>take</span>
-				<span class='word'>me</span>
-				<span class='word'>back</span>
-				<span class='word'>to</span>
-				<span class='word'>the</span>
-				<span class='word'>start</span>
-			</div>
-		</div>
 	</div>
 
 	<div>
-		<textarea id="message">
-		</textarea>
+		<textarea id="tweet"></textarea>
+		<div class="twtcounter"></div>
 	</div>
 
 </div>
 
 
 <script>
-Selector.addSelectionEvent()
+
+function updateTweetCounter () {
+	var tweet =  document.querySelector('textarea#tweet').value,
+		counter = document.querySelector('.twtcounter')
+
+	counter.innerHTML = tweet.length
+	if (tweet.length > 140)
+		counter.classList.add('larger')
+	else counter.classList.remove('larger')
+	
+	return true;
+}
+
+(function () {
+
+	var tweet = document.querySelector("textarea#tweet")
+	tweet.addEventListener('focus', updateTweetCounter)
+	tweet.addEventListener('keyup', updateTweetCounter)
+	tweet.addEventListener('onchange', updateTweetCounter)
+
+})();
+
+
+vagalume.musicInfoFromName('Coldplay', 'The Scientist',
+	function () {
+		console.log('oncaptcha', arguments)
+	}, function (data) {
+		d = data
+		m = d.music[0]
+		writeLyrics(m.lyrics)
+	}
+)
+
+function writeLyrics (text) {
+
+	var verses = text.split('\n\n'),
+		lyricstag = document.querySelector(".lyrics")
+
+	// loop through verses
+	for (var v, i=0; v=verses[i]; i++) {
+		console.log('verse', v)
+		var vtag = document.createElement('div'),
+			lines = v.split('\n')
+		vtag.className = "verse"
+
+		// loop through lines
+		for (var l, i2=0; l=lines[i2]; i2++) {
+			ltag = document.createElement('div'),
+				words = l.split(' ')
+			ltag.className = "line"
+
+			// loop through words
+			for (var w, i3=0; w=words[i3]; i3++) {
+				var wtag = document.createElement('span')
+				wtag.className = 'word'
+				wtag.innerHTML = w
+
+				ltag.appendChild(wtag)
+			}
+
+			vtag.appendChild(ltag)
+		}
+
+		lyricstag.appendChild(vtag)
+	}
+
+	Selector.addSelectionEvent()
+}
+
+
 </script>
 </body>
 </html>
