@@ -6,9 +6,19 @@
 
 <style>
 	
+	#wrapper {
+		position: absolute;
+
+		width: 800px;
+		left: 50%; margin-left: -400px;
+	}
+
 	.verse {
-		-webkit-user-select: none;
 		font: 15px "Open Sans", Arial;
+
+		outline: 1px solid #444;
+		display: table;
+		padding: 10px;
 	}
 
 	.line {
@@ -27,6 +37,7 @@
 	}
 
 	.lyrics {
+		-webkit-user-select: none;
 		outline: 1px solid black;
 	}
 
@@ -35,57 +46,118 @@
 </head>
 <body>
 
-<div class="lyrics">
-	<div class="verse">
-		<div class='line'>
-			<span class='word'>Nobody</span>
-			<span class='word'>said</span>
-			<span class='word'>it</span>
-			<span class='word'>was</span>
-			<span class='word'>easy</span>
+<div id="wrapper">
+	
+	<div>
+		<h2>Search a song</h2>
+		<form class="well form-search">
+			<input type="text" class="input-medium search-query">
+			<button type="submit" class="btn">Search</button>
+		</form>
+	</div>
+
+	<div class="lyrics">
+		<div class="verse">
+			<div class='line'>
+				<span class='word'>Nobody</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>was</span>
+				<span class='word'>easy</span>
+			</div>
+			<div class='line'>
+				<span class='word'>It's</span>
+				<span class='word'>such</span>
+				<span class='word'>a</span>
+				<span class='word'>shame</span>
+				<span class='word'>for</span>
+				<span class='word'>us</span>
+				<span class='word'>to</span>
+				<span class='word'>part</span>
+			</div>
+			<div class='line'>
+				<span class='word'>Nobody</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>was</span>
+				<span class='word'>easy</span>
+			</div>
+			<div class='line'>
+				<span class='word'>No</span>
+				<span class='word'>one</span>
+				<span class='word'>ever</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>would</span>
+				<span class='word'>be</span>
+				<span class='word'>this</span>
+				<span class='word'>hard</span>
+			</div>
+			<div class='line'>
+				<span class='word'>Oh</span>
+				<span class='word'>take</span>
+				<span class='word'>me</span>
+				<span class='word'>back</span>
+				<span class='word'>to</span>
+				<span class='word'>the</span>
+				<span class='word'>start</span>
+			</div>
 		</div>
-		<div class='line'>
-			<span class='word'>It's</span>
-			<span class='word'>such</span>
-			<span class='word'>a</span>
-			<span class='word'>shame</span>
-			<span class='word'>for</span>
-			<span class='word'>us</span>
-			<span class='word'>to</span>
-			<span class='word'>part</span>
-		</div>
-		<div class='line'>
-			<span class='word'>Nobody</span>
-			<span class='word'>said</span>
-			<span class='word'>it</span>
-			<span class='word'>was</span>
-			<span class='word'>easy</span>
-		</div>
-		<div class='line'>
-			<span class='word'>No</span>
-			<span class='word'>one</span>
-			<span class='word'>ever</span>
-			<span class='word'>said</span>
-			<span class='word'>it</span>
-			<span class='word'>would</span>
-			<span class='word'>be</span>
-			<span class='word'>this</span>
-			<span class='word'>hard</span>
-		</div>
-		<div class='line'>
-			<span class='word'>Oh</span>
-			<span class='word'>take</span>
-			<span class='word'>me</span>
-			<span class='word'>back</span>
-			<span class='word'>to</span>
-			<span class='word'>the</span>
-			<span class='word'>start</span>
+
+		<div class="verse">
+			<div class='line'>
+				<span class='word'>Nobody</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>was</span>
+				<span class='word'>easy</span>
+			</div>
+			<div class='line'>
+				<span class='word'>It's</span>
+				<span class='word'>such</span>
+				<span class='word'>a</span>
+				<span class='word'>shame</span>
+				<span class='word'>for</span>
+				<span class='word'>us</span>
+				<span class='word'>to</span>
+				<span class='word'>part</span>
+			</div>
+			<div class='line'>
+				<span class='word'>Nobody</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>was</span>
+				<span class='word'>easy</span>
+			</div>
+			<div class='line'>
+				<span class='word'>No</span>
+				<span class='word'>one</span>
+				<span class='word'>ever</span>
+				<span class='word'>said</span>
+				<span class='word'>it</span>
+				<span class='word'>would</span>
+				<span class='word'>be</span>
+				<span class='word'>this</span>
+				<span class='word'>hard</span>
+			</div>
+			<div class='line'>
+				<span class='word'>Oh</span>
+				<span class='word'>take</span>
+				<span class='word'>me</span>
+				<span class='word'>back</span>
+				<span class='word'>to</span>
+				<span class='word'>the</span>
+				<span class='word'>start</span>
+			</div>
 		</div>
 	</div>
-</div>
 
-	<textarea id="message">
-	</textarea>
+	<div>
+		<textarea id="message">
+		</textarea>
+	</div>
+	
+</div>
 
 <script>
 
@@ -100,7 +172,7 @@ function unselectWords () {
 		selected[i].classList.remove('selected')
 }
 
-function getRange (a, b) {
+function getRange ( a, b ) {
 	// return the list of words between (an including) A and B
 	
 	var w = document.querySelectorAll('.word'),
@@ -156,7 +228,7 @@ function updateTweetBox () {
 		txt += w[i].innerHTML + " "
 	}
 
-	document.querySelector('textarea#message').value = 'a'+txt
+	document.querySelector('textarea#message').value = txt
 }
 
 (function () {
@@ -193,7 +265,6 @@ function updateTweetBox () {
 		// console.log("hoverWord:", hoverWord, "endWord:", endWord);
 		endWord = hoverWord = null
 		updateTweetBox()
-		
 	}
 
 	// for words only!
