@@ -79,12 +79,12 @@
                         try {
                             k = decodeURIComponent(k);
                         } catch (e) {
-                            k = escape(k);
+                            k = unescape(k);
                         }
                         try {
                             v = decodeURIComponent(v);
                         } catch (e) {
-                            v = escape(v);
+                            v = unescape(v);
                         }
                         
                         if (!obj.params[k] && k.length !== 0 && v.length !== 0)
