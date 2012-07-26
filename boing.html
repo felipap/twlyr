@@ -3,6 +3,7 @@
 <head>
 
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
+	<script src="selector.js"/></script>
 
 <style>
 	
@@ -156,146 +157,12 @@
 		<textarea id="message">
 		</textarea>
 	</div>
-	
+
 </div>
 
+
 <script>
-
-
-function getSelectedWords () {
-	return document.querySelectorAll('.word.selected')
-}
-
-function unselectWords () {
-	selected = document.querySelectorAll('.word.selected') 
-	for (var i=0; i<selected.length; i++)
-		selected[i].classList.remove('selected')
-}
-
-function getRange ( a, b ) {
-	// return the list of words between (an including) A and B
-	
-	var w = document.querySelectorAll('.word'),
-		selection = [],
-		last = null // the item that come at last
-
-	for (var i=0; i<w.length; i++) {
-		if (w[i] == a)
-			last = b;
-		else if (w[i] == b)
-			last = a;
-
-		if (last !== null)
-			for (; i<w.length; i++) {
-				selection.push(w[i])
-				if (w[i] == last)
-					return selection
-			}
-	}
-
-	return []
-}
-
-function selectRange ( a, b ) {
-	// selects words between A and B
-	var w = getRange(a, b)
-	for (var i=0; i<w.length; i++)
-		w[i].classList.add('selected')
-	if (!w[0])
-		throw Error('no range selected!')
-}
-
-function getSelectionEnds ( actual ) {
-	// returns the extreme words in current selection process.
-	// optional argument 'actual', to be used instead of
-	// 'hoverWord' as the other extreme other than 'endWord'
-	if ((!hoverWord && !actual) || !endWord) {
-		// if not in selection process, try to get selected words.
-		// this is what works when words are selected by no longer
-		// BEING selected = mouse is up.
-		var w = document.querySelectorAll('.word.selected')
-		return [w[0], w[w.length-1]]
-	}
-	return [actual || hoverWord, endWord]
-}
-
-function updateTweetBox () {
-	
-	var txt = ""
-		, w = getRange.apply(null, getSelectionEnds())
-	
-	for (var i=0; i<w.length; i++) {
-		txt += w[i].innerHTML + " "
-	}
-
-	document.querySelector('textarea#message').value = txt
-}
-
-(function () {
-
-	mouseDown = 0
-	var lyrics = document.querySelector(".lyrics")
-	document.onmousedown = function ( e ) {
-		
-		if (e.button != 0)
-			return
-
-		mouseDown = 1
-		console.log(">> mousedown!", e)
-		// try to unselect possibly selected words
-		unselectWords()
-		// console.log("hoverWord:", hoverWord, "endWord:", endWord);
-		if (hoverWord) {
-			// cursor is ALREADY above a word
-			// fire mouseover event to start selection of the current word
-			// otherwise it'll wait until the mouse goes over another word.
-			var e = document.createEvent("MouseEvents");
-			e.initMouseEvent("mouseover", true, true)
-			hoverWord.dispatchEvent(e)
-		}
-			
-	}
-
-	document.onmouseup = function ( e ) {		
-		if (e.button != 0)
-			return
-		
-		mouseDown = 0
-		console.log(">> mouseup", e)
-		// console.log("hoverWord:", hoverWord, "endWord:", endWord);
-		endWord = hoverWord = null
-		updateTweetBox()
-	}
-
-	// for words only!
-	var mouseover = function ( e ) {
-		hoverWord = e.target;
-
-		if (!mouseDown)
-			return
-
-		if (!endWord)
-			// cursor, after clicked, moved over to a word.
-			// in that case, set endWord to be the first one "hovered".
-			endWord = e.target;
-
-		unselectWords()
-		selectRange.apply(null, getSelectionEnds()) // (e.target, endWord)
-	}
-
-	endWord = null // the first word of a selection process, default to null
-	hoverWord = null // the actual word being hovered, default to null
-	var words = document.querySelectorAll('.word')
-	for (var i=0; i<words.length; i++) {
-		words[i].addEventListener('mouseover', mouseover)
-		words[i].addEventListener('mouseout', function ( e ) {
-			if (hoverWord === e.target)
-				hoverWord = null
-		})
-	}
-
-})();
-
+Selector.addSelectionEvent()
 </script>
 </body>
 </html>
