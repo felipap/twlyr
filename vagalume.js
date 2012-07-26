@@ -1,114 +1,109 @@
 ﻿var vagalume = (function () {
-    var splitUrl = function (url) {
-        var tmp = url.split('?');
-        
-        var first = tmp[0] || '';
-        var second = tmp.slice(1).join('?') || '';
-        
-        if (second !== '')
-            tmp = second.split('#');
-        else
-            tmp = first.split('#');
-        
-        var third = tmp.slice(1).join('#') || '';
-       
-        return [first, second, third];
-    };
-    var joinUrl = function (first, second, third) {
-        var url = first;
-        if (second !== '')
-            url += '?' + second;
-        if (third !== '')
-            url += '#' + third;
-        return url;
-    };
-    var changeQueryStringParam = function (query, key, value) {
-        var tempArr = splitUrl(query);
-        
-        var baseUrl = tempArr[0];
-        var paramsUrl = tempArr[1];
-        var remainUrl = tempArr[2];
-        
-        var assign = key + '=' + value;
-        
-        var keyLength = key.length;
-        
-        var found = false;
-        
-        var params = paramsUrl.split('&');
-        for (var i = 0; i < params.length && !found; i++) {
-            if (params[i].slice(0, keyLength) === key) {
-                params.splice(i, 1, '&' + assign);
-                paramsUrl = params.join('&');
+    var urlmodule = (function () {
+        var forEachKey = (function () {
+            console.log('keys');
+            console.log(Object.keys);
+            if (Object.keys) {
+                return function (obj, fn) {
+                    if (typeof obj === 'object') {
+                        var keys = Object.keys(obj);
+                        for (var i = 0; i < keys.length; i++)
+                            fn(keys[i], obj[keys[i]]);
+                    }
+                };
             }
-        }
-        
-        if (!found) {
-            if (paramsUrl === '')
-                paramsUrl = '?' + assign;
-            else
-                paramsUrl += '&' + assign;
-        }
-
-        return joinUrl(baseUrl, paramsUrl, remainUrl);
-    };
-    var urlParse = function (url) {
-        var obj = {};
-        var params = '';
-        
-        if (typeof url !== 'string' || url.length === 0)
-            return obj;
-            
-        url = url.split('?');
-        obj.url = url[0];
-        obj.params = {};
-        if (url.length >= 1) {
-            params = url.slice(1).join('?');
-            
-            url = url[1].split('#');
-        } else
-            url = url[0].split('#');
-            
-        if (url.length >= 1)
-            obj.rest = url.slice(1).join('#');
-        
-        if (params.length === 0)
-            return obj;
-        
-        params = params.split('&');
-        
-        for (var i = 0; i < params.length; i++) {
-            url = params[i].split('=');
-            if (url.length >= 2) {
-                var k = url[0];
-                var v = url.slice(1).join('=');
-                
-                try {
-                    k = decodeURIComponent(k);
-                } catch (e) {
-                    k = decode(k);
+            return function (obj, fn) {
+                if (typeof obj === 'object') {
+                    for (var key in obj) {
+                        if (obj.hasOwnProperty(key))
+                            fn(key, obj[key]);
+                    }
                 }
-                try {
-                    v = decodeURIComponent(v);
-                } catch (e) {
-                    v = decode(v);
+            };
+        }());
+        return {
+            join: function (obj) {
+                var url = obj.url || '';
+                var params = obj.params || {};
+                var hash = obj.hash || '';
+                
+                if (typeof url !== 'string' ||
+                    typeof hash !== 'string' ||
+                    typeof params !== 'object')
+                    return '';
+                    
+                if (params.length !== 0) {
+                    var params_url = '';
+                    forEachKey(params, function (k, v) {
+                        if (params_url.length !== 0)
+                            params_url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+                        else
+                            params_url = '?' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+                    });
+                    url += params_url;
+                }
+                if (hash.length !== 0)
+                    url += '#' + hash;
+                
+                return url;
+            },
+            parse: function (url) {
+                var obj = {};
+                var params = '';
+                
+                if (typeof url !== 'string' || url.length === 0)
+                    return obj;
+                    
+                url = url.split('#');
+                obj.url = url[0];
+                if (url.length > 1)
+                    obj.hash = url.slice(1).join('#');
+                    
+                url = obj.url.split('?');
+                obj.url = url[0];
+                if (url.length > 1)
+                    params = url.slice(1).join('?');
+                    
+                if (params.length === 0)
+                    return obj;
+                
+                params = params.split('&');
+                obj.params = {};
+                
+                for (var i = 0; i < params.length; i++) {
+                    url = params[i].split('=');
+                    if (url.length >= 2) {
+                        var k = url[0];
+                        var v = url.slice(1).join('=');
+                        
+                        try {
+                            k = decodeURIComponent(k);
+                        } catch (e) {
+                            k = escape(k);
+                        }
+                        try {
+                            v = decodeURIComponent(v);
+                        } catch (e) {
+                            v = escape(v);
+                        }
+                        
+                        if (!obj.params[k] && k.length !== 0 && v.length !== 0)
+                            obj.params[k] = v;
+                    }
                 }
                 
-                if (!obj.params[k] && k.length !== 0 && v.length !== 0)
-                    obj.params[k] = v;
-            }
+                return obj;
+            },
         }
-        
-        return obj;
-    };
+    }());
     var doQueryCaptcha = function (query, onCaptcha, onData) {
         function onPreData(data) {
             if (data && data.captcha) {
+                var obj = urlmodule.parse(data.url);
                 onCaptcha(data.url, function (input) {
-                    // FIX ME: This parses two times. This is bad.
-                    query = changeQueryString(query, 'serial', data.serial);
-                    query = changeQueryString(query, 'udig', input);
-                    onPreData(query, onPreData);
+                    obj.serial = data.serial;
+                    obj.udig = input;
+                    onPreData(urlmodule.join(obj), onPreData);
                 });
             } else
                 onData(data);
