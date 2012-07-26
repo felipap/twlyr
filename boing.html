@@ -2,6 +2,8 @@
 <html>
 <head>
 
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
+
 <style>
 	
 	.verse {
@@ -182,8 +184,7 @@ function updateTweetBox () {
 			
 	}
 
-	document.onmouseup = function ( e ) {
-		
+	document.onmouseup = function ( e ) {		
 		if (e.button != 0)
 			return
 		
@@ -197,8 +198,6 @@ function updateTweetBox () {
 
 	// for words only!
 	var mouseover = function ( e ) {
-
-		// console.log('mouse over: '+e.target.innerHTML)
 		hoverWord = e.target;
 
 		if (!mouseDown)
