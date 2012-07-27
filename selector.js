@@ -80,7 +80,7 @@
 				lpieces.push(wpieces.join(' '))
 			}
 
-			document.querySelector('textarea#tweet').value = lpieces.join(" ♬ ")  // ♪ ♫ ♩ ♬ ♭ ♮ ♯ 
+			document.querySelector('textarea#tweet').value = lpieces.join(" \u266A ")  // ♪ ♫ ♩ ♬ ♭ ♮ ♯  // \u266A\u266B\u2669\u266C\u266D\u266E\u266F
 			updateTweetCounter()
 		}
 
@@ -136,7 +136,6 @@
 			// otherwise it'll wait until the mouse goes over another word.
 			var e = document.createEvent("MouseEvents")
 			e.initMouseEvent("mouseover")
-			console.log('pseudo mouseover event fired on', hoverWord)
 			hoverWord.dispatchEvent(e)
 		}
 			
