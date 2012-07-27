@@ -80,7 +80,7 @@
 				lpieces.push(wpieces.join(' '))
 			}
 
-			document.querySelector('textarea#tweet').value = lpieces.join(" \u266A ")  // ♪ ♫ ♩ ♬ ♭ ♮ ♯  // \u266A\u266B\u2669\u266C\u266D\u266E\u266F
+			document.querySelector('textarea#tweet').value = lpieces.join(" ♪ ")  // ♪ ♫ ♩ ♬ ♭ ♮ ♯  // \u266A\u266B\u2669\u266C\u266D\u266E\u266F
 			updateTweetCounter()
 		}
 
