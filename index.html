@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
 	<script src="jqmin1.7.js"/></script>
@@ -39,9 +40,13 @@
 	}
 
 	.lyrics {
+
 		float: right;
 		-webkit-user-select: none;
 		outline: 1px solid #ddd;
+
+		min-height: 200px;
+		min-width: 400px;
 	}
 
 	#searchbar {
@@ -94,6 +99,7 @@
 		width: 350px;
 		font-size: 16px;
 		height: 70px;
+		resize: vertical;
 	}
 
 	.twtcounter.larger {
@@ -112,8 +118,8 @@
 		<h2>Search a song</h2>
 		<div id="searchbar">
 			<form class="form-search">
-				<input type="text" placeholder="artist name" class="input-medium search-query" id="search-artist">
-				<input type="text" placeholder="music name" class="input-medium search-query" id="search-music">
+				<input type="text" placeholder="le artist" class="input-medium search-query" id="search-artist">
+				<input type="text" placeholder="le song" class="input-medium search-query" id="search-music">
 				<button type="submit" class="btn btn-success btn-large">Search</button>
 			</form>
 		</div>
@@ -133,6 +139,7 @@
 <script>
 
 function updateTweetCounter () {
+	// update characters counter in tweet textarea
 	var tweet =  document.querySelector('textarea#tweet').value,
 		counter = document.querySelector('.twtcounter')
 
@@ -144,34 +151,19 @@ function updateTweetCounter () {
 	return true;
 }
 
-(function () {
-
-	var tweet = document.querySelector("textarea#tweet")
-	tweet.addEventListener('focus', updateTweetCounter)
-	tweet.addEventListener('keyup', updateTweetCounter)
-	tweet.addEventListener('onchange', updateTweetCounter)
-
-})();
-
-
-vagalume.musicInfoFromName('Coldplay', 'The Scientist',
-	function () {
-		console.log('oncaptcha', arguments)
-	}, function (data) {
-		d = data
-		m = d.music[0]
-		writeLyrics(m.lyrics)
-	}
-)
-
 function writeLyrics (text) {
+	// write lyrics given text retrieved from vagalume's api
+	// lines must be separated by '\n' and verses by empty lines
 
-	var verses = text.split('\n\n'),
+	var verses = text.split('\n\n')
 		lyricstag = document.querySelector(".lyrics")
+
+	// clean lyrics
+	while (lyricstag.children[0])
+		lyricstag.removeChild(lyricstag.children[0])
 
 	// loop through verses
 	for (var v, i=0; v=verses[i]; i++) {
-		console.log('verse', v)
 		var vtag = document.createElement('div'),
 			lines = v.split('\n')
 		vtag.className = "verse"
@@ -200,17 +192,30 @@ function writeLyrics (text) {
 	Selector.addSelectionEvent()
 }
 
+(function () {
+
+	var tweet = document.querySelector("textarea#tweet")
+	tweet.addEventListener('focus', updateTweetCounter)
+	tweet.addEventListener('keyup', updateTweetCounter)
+	tweet.addEventListener('onchange', updateTweetCounter)
+
+})();
+
+$('#search-artist').val('Coldplay')
+$('#search-music').val('The Scientist')
+
+
 $('#searchbar form').submit(function () {
 	vagalume.musicInfoFromName(
-	$('#search-artist').val(),
-	$('#search-music').val(),
-	function () {
-		console.log('oncaptcha', arguments)
-	}, function (data) {
-		d = data
-		m = d.music[0]
-		writeLyrics(m.lyrics)
-	});
+		$('#search-artist').val(),
+		$('#search-music').val(),
+		function () {
+			console.log('oncaptcha', arguments)
+		}, function (data) {
+			d = data
+			m = d.music[0]
+			writeLyrics(m.lyrics)
+		});
 	return false;
 });
 
