@@ -49,7 +49,7 @@
 		text-shadow: none;
 	}
 
-	#searchbar button {
+	#searchbar button NOT {
 		border-top-left-radius: 0;
 		border-bottom-left-radius: 0;
 		border-top-right-radius: 5px;
@@ -95,15 +95,8 @@
 
 	/****************/
 
-	textarea#tweet {
-		width: 350px;
-		font-size: 15px;
-		height: 70px;
-		resize: vertical;
-	}
-
 	.box.left {
-		max-width: 380px;
+		width: 370px;
 		float: left;
 		padding: 10px;
 	}
@@ -113,8 +106,32 @@
 		width: 400px;
 	}
 
-	.tweet-line {
-		outlines: 1px solid black;
+	/****************/
+
+	.avatar {
+		background: whiteSmoke;
+		padding: 10px;
+		border: 1px solid #DDD;
+		font-size: 16px;
+		text-shadow: 1px 0px rgb(0, 0, 0, .5));
+		font-weight: bold;
+	}
+
+	.avatar img {
+		outline: 1px solid #DDD;
+		width: 50px;
+		height: 50px;
+		margin-right: 10px;
+	}
+
+	textarea#tweet {
+		width: 360px;
+		font-size: 15px;
+		height: 70px;
+		resize: vertical;
+	}
+
+	.align-line {
 		text-align: right;
 		height: 30px;
 	}
@@ -149,14 +166,21 @@
 	</div>
 
 	<div class="box left">
+		
 		<h4 id="artist-name"></h4>
 		<h4 id="music-name"></h4>
+		
 		<br>
+
+		<div class="avatar">
+			<img src="images/avatar.JPG" /> is singing...
+		</div>
+
 		<textarea id="tweet"></textarea>
 
-		<div class="tweet-line">
+		<div class="align-line">
 			<div class="twtcounter">0</div>
-			<button class="btn btn-success" id="tweet-button">Tweet</button>
+			<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
 		</div>
 	</div>
 	<div class="box right">
@@ -166,13 +190,11 @@
 
 </div>
 
-<a href="https://twitter.com/share" class="twitter-share-button" data-via="f03lipe" data-size="large" data-count="none">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-
 <script>
 
-function tweet ( text ) {
-	url.open("https://twitter.com/intent/tweet?text="
+function openTweetPopup () {
+	var text = document.querySelector('#tweet').value
+	window.open("https://twitter.com/intent/tweet?text="+escape(text))
 }
 
 function disableTweet () {
