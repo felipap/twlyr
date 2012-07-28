@@ -9,45 +9,6 @@
 	<script src="selector.js" charset="utf-8"/></script>
 
 <style>
-	
-	#wrapper {
-		position: absolute;
-
-		width: 800px;
-		left: 50%; margin-left: -400px;
-	}
-
-	.verse {
-		font: 15px "Open Sans", Arial;
-
-		display: table;
-		padding: 10px;
-	}
-
-	.line {
-		font-size: 0; /* remove space between spans */
-		/* text-align: justify; */
-	}
-
-	.word {
-		font-size: 15px;
-		padding: 2px 3px;
-	}
-
-	.word.selected {
-		background: #08C;
-		color: white;
-	}
-
-	.lyrics {
-
-		float: right;
-		-webkit-user-select: none;
-		outline: 1px solid #ddd;
-
-		min-height: 200px;
-		min-width: 400px;
-	}
 
 	#searchbar {
 		display: table;
@@ -95,24 +56,86 @@
 		border-bottom-right-radius: 5px;
 	}
 
+	/****************/
+	
+	.container {
+		width: 800px;
+	}
+
+	.verse {
+		font: 15px "Open Sans", Arial;
+
+		display: table;
+		padding: 10px;
+	}
+
+	.line {
+		font-size: 0; /* remove space between spans */
+		/* text-align: justify; */
+	}
+
+	.word {
+		font-size: 15px;
+		padding: 2px 3px;
+	}
+
+	.word.selected {
+		background: #08C;
+		color: white;
+	}
+
+	.lyrics {
+		float: right;
+		-webkit-user-select: none;
+		outline: 1px solid #ddd;
+
+		min-height: 200px;
+		width: 100%;
+	}
+
+	/****************/
+
 	textarea#tweet {
 		width: 350px;
-		font-size: 16px;
+		font-size: 15px;
 		height: 70px;
 		resize: vertical;
 	}
 
-	.twtcounter.larger {
-		color: red;
+	.box.left {
+		max-width: 380px;
+		float: left;
+		padding: 10px;
 	}
 
+	.box.right {
+		float: right;
+		width: 400px;
+	}
+
+	.tweet-line {
+		outlines: 1px solid black;
+		text-align: right;
+		height: 30px;
+	}
+
+	.twtcounter {
+		float: left;
+		padding: 5px 10px;
+	}
+	.twtcounter.exceed { color: red; }
+
+	#tweet-button {
+		float: right;
+		font-weight: bold;
+	}
 
 </style>
 
 </head>
 <body>
 
-<div id="wrapper">
+<div class="container">
 	
 	<div>
 		<h2>Search a song</h2>
@@ -120,33 +143,51 @@
 			<form class="form-search">
 				<input type="text" placeholder="le artist" class="input-medium search-query" id="search-artist">
 				<input type="text" placeholder="le song" class="input-medium search-query" id="search-music">
-				<button type="submit" class="btn btn-success btn-large">Search</button>
+				<button type="submit" class="btn btn-info btn-large">Search</button>
 			</form>
 		</div>
 	</div>
 
-	<div class="lyrics">
-	</div>
-
-	<div>
+	<div class="box left">
+		<h4 id="artist-name"></h4>
+		<h4 id="music-name"></h4>
+		<br>
 		<textarea id="tweet"></textarea>
-		<div class="twtcounter"></div>
+
+		<div class="tweet-line">
+			<div class="twtcounter">0</div>
+			<button class="btn btn-success" id="tweet-button">Tweet</button>
+		</div>
+	</div>
+	<div class="box right">
+		<div class="lyrics">
+		</div>
 	</div>
 
 </div>
-
-
 <script>
+
+function disableTweet () {
+	var counter = document.querySelector('.twtcounter')
+	counter.classList.add('exceed')
+	document.querySelector('#tweet-button').classList.add('disabled')
+}
+
+function enableTweet () {
+	var counter = document.querySelector('.twtcounter')
+	counter.classList.remove('exceed')
+	document.querySelector('#tweet-button').classList.remove('disabled')
+}
 
 function updateTweetCounter () {
 	// update characters counter in tweet textarea
 	var tweet =  document.querySelector('textarea#tweet').value,
 		counter = document.querySelector('.twtcounter')
-
+	
 	counter.innerHTML = tweet.length
 	if (tweet.length > 140)
-		counter.classList.add('larger')
-	else counter.classList.remove('larger')
+		disableTweet()
+	else enableTweet()
 	
 	return true;
 }
@@ -215,8 +256,10 @@ $('#searchbar form').submit(function () {
 			d = data
 			m = d.music[0]
 			writeLyrics(m.lyrics)
+			$("#music-name").html(d.music[0].name)
+			$("#artist-name").html(d.artist.name)
 		});
-	return false;
+	return false
 });
 
 

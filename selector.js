@@ -3,8 +3,17 @@
 // TODO:
 // compatibility issues for using elm.classList?
 
+String.prototype.strip = function () {
+	return String(this).replace(/^\s|\s+$/g, '')
+};
+
+String.prototype.removePunctuation = function () {
+	return String(this).strip().replace(/[,.]+$/g, '')
+};
+
 (function (window, document, undefined) {
 	
+
 	window.Selector = {
 
 		unselectWords: function () {
@@ -69,6 +78,13 @@
 
 		, updateTweetBox: function () {
 			
+			if (!hoverWord || !endWord) {
+				// unselection process: clear tweet and return
+				document.querySelector('textarea#tweet').value = ''
+				updateTweetCounter()
+				return
+			}
+
 			var lines = Selector.getSplitRange.apply(null, Selector.getSelectionEnds())
 				, lpieces = []
 				, i = 0
@@ -76,7 +92,7 @@
 			while (line = lines[i++]) {
 				var wpieces = [], i2 = 0
 				while (word = line[i2++])
-					wpieces.push(word.innerHTML)
+					wpieces.push(word.innerHTML.removePunctuation())
 				lpieces.push(wpieces.join(' '))
 			}
 
@@ -95,10 +111,11 @@
 				if (!mouseDown)
 					return
 		
-				if (!endWord)
+				if (!endWord) {
 					// cursor, after clicked, moved over to a word.
 					// in that case, set endWord to be the first one "hovered".
 					endWord = e.target
+				}
 
 				Selector.updateTweetBox()
 				Selector.unselectWords()
@@ -121,6 +138,7 @@
 	mouseDown = false // mouse starts unclicked
 	endWord = null // the first word of a selection process, default to null
 	hoverWord = null // the actual word being hovered, default to null
+	lastSelected = null // the last word selected before 
 	
 	document.onmousedown = function ( e ) {
 		if (e.button != 0)
@@ -129,6 +147,7 @@
 		console.log("=> mousedown")
 		mouseDown = true
 		
+
 		if (hoverWord) {
 			Selector.unselectWords() // try to unselect possibly selected words
 			// cursor is ALREADY above a word (so select it right away)
@@ -143,9 +162,26 @@
 
 	document.onmouseup = function ( e ) {		
 		if (e.button == 0) { // left-click only
-			console.log("=> mouseup")
 			mouseDown = false
-			endWord = hoverWord = null
+
+			console.log("=> mouseup", lastSelected, hoverWord, endWord)
+
+			if (hoverWord && endWord) {
+				var selected = Selector.getRange.apply(null, Selector.getSelectionEnds())
+				if (selected.length == 1) { // if only 1 word is currently selected
+					if (selected[0] === lastSelected) {
+						// if it was selected last time, unselect it!
+						Selector.unselectWords()
+						endWord = lastSelected = null
+						Selector.updateTweetBox()
+						return
+					} else
+						// else, update lastSelected
+						lastSelected = selected[0]
+				}
+			}
+
+			endWord = null // hoverWord = null
 		}
 	}
 
