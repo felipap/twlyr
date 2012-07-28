@@ -96,9 +96,9 @@
 	/****************/
 
 	.box.left {
-		width: 370px;
+		width: 380px;
 		float: left;
-		padding: 10px;
+		padding: 10px 0;
 	}
 
 	.box.right {
@@ -109,23 +109,22 @@
 	/****************/
 
 	.avatar {
-		background: whiteSmoke;
+		sbackground: whiteSmoke;
 		padding: 10px;
-		border: 1px solid #DDD;
 		font-size: 16px;
 		text-shadow: 1px 0px rgb(0, 0, 0, .5));
 		font-weight: bold;
 	}
 
 	.avatar img {
-		outline: 1px solid #DDD;
+		outline: 1px solid #CCC;
 		width: 50px;
 		height: 50px;
 		margin-right: 10px;
 	}
 
 	textarea#tweet {
-		width: 360px;
+		width: 350px;
 		font-size: 15px;
 		height: 70px;
 		resize: vertical;
@@ -141,6 +140,17 @@
 		padding: 5px 10px;
 	}
 	.twtcounter.exceed { color: red; }
+
+	.tweet-box {
+		background: whiteSmoke;
+		box-shadow: 0 0 0 1px #ddd;
+		border-radius: 5px;
+		padding: 10px;
+	}
+
+	.tweet-box.blue { background: #08C; }
+	.tweet-box.blue .twtcounter { color: white; }
+	.tweet-box.blue .avatar { color: white; }
 
 	#tweet-button {
 		float: right;
@@ -172,15 +182,17 @@
 		
 		<br>
 
-		<div class="avatar">
-			<img src="images/avatar.JPG" /> is singing...
-		</div>
+		<div class="tweet-box">
+			<div class="avatar">
+				<img src="images/avatar.JPG" /> is procrastinating...
+			</div>
 
-		<textarea id="tweet"></textarea>
+			<textarea id="tweet"></textarea>
 
-		<div class="align-line">
-			<div class="twtcounter">0</div>
-			<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
+			<div class="align-line">
+				<div class="twtcounter">0</div>
+				<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
+			</div>
 		</div>
 	</div>
 	<div class="box right">
