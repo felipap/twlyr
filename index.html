@@ -172,16 +172,18 @@ $('#search-music').val('The Scientist');
 
 
 $('#searchbar form').submit(function (){
-	window.location.hash = '!search';
+	var artist = encodeURIComponent($('#search-artist').val());
+	var music = encodeURIComponent($('#search-music').val());
+	window.location.hash = '#!search:' + artist + ':' + music;
 	return false;
 });
 
 (function (){
 	var parseHash = function (hash) {
-		console.log(hash);
-		if (!hash || hash.length < 3 || hash.slice(0, 2) !== '#!')
-			return 'default';
-		return hash.slice(2);
+		var ret = 'default';
+		if (!hash || hash.length < 4 || hash.slice(0, 2) !== '#!')
+			return ret;
+		return hash.slice(2).split(':')[0];
 	};
 	var currentHash = false;
 	setInterval(function () {
