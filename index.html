@@ -4,8 +4,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
-	<script src="jqmin1.7.js" charset="utf-8"/></script>
-	<script src="vagalume.js" charset="utf-8"/></script>
+	<script src="jqmin1.7.js" charset="utf-8"></script>
+	<script src="vagalume.js" charset="utf-8"></script>
+	<script src="selector.js" charset="utf-8"></script>
 
 <style>
 
@@ -185,10 +186,11 @@ $(function (){
 	var currentHash = false;
 	setInterval(function () {
 		if (window.location.hash !== currentHash) {
+			var pagename = parseHash(window.location.hash);
 			currentHash = window.location.hash;
 			$('#content').html('');
 			$.ajax({
-				url: parseHash(window.location.hash),
+				url: pagename + '.html',
 				async: true,
 				cache: true,
 				error: function (){
@@ -199,6 +201,17 @@ $(function (){
 				timeout: 10000,
 				success: function (html) {
 					$('#content').html(html);
+					$.ajax({
+						url: pagename + '.js',
+						async: true,
+						cache: true,
+						error: function (){
+							console.log('ajax error');
+						},
+						type: 'GET',
+						dataType: 'script',
+						timeout: 10000,
+					});
 				},
 			});
 		}
