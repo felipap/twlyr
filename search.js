@@ -1,43 +1,51 @@
-﻿function openTweetPopup () {
+﻿function openTweetPopup() {
+    'use strict';
     var text = document.querySelector('#tweet').value;
-    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text));
 }
 
-function disableTweet () {
+function disableTweet() {
+    'use strict';
     var counter = document.querySelector('.twtcounter');
     counter.classList.add('exceed');
     document.querySelector('#tweet-button').classList.add('disabled');
 }
 
-function enableTweet () {
+function enableTweet() {
+    'use strict';
     var counter = document.querySelector('.twtcounter');
     counter.classList.remove('exceed');
     document.querySelector('#tweet-button').classList.remove('disabled');
 }
 
-function updateTweetCounter () {
+function updateTweetCounter() {
     // update characters counter in tweet textarea
-    var tweet =  document.querySelector('textarea#tweet').value;
+    'use strict';
+    var tweet = document.querySelector('textarea#tweet').value;
     var counter = document.querySelector('.twtcounter');
-    
+
     counter.innerHTML = tweet.length;
-    if (tweet.length > 140)
+    if (tweet.length > 140) {
         disableTweet();
-    else enableTweet();
+    }
+    else {
+        enableTweet();
+    }
     
     return true;
 }
 
-function writeLyrics (text) {
+function writeLyrics(text) {
     // write lyrics given text retrieved from vagalume's api
     // lines must be separated by '\n' and verses by empty lines
-
+    'use strict';
     var verses = text.split('\n\n');
     var lyricstag = document.querySelector('.lyrics');
 
     // clean lyrics
-    while (lyricstag.children[0])
+    while (lyricstag.children[0]) {
         lyricstag.removeChild(lyricstag.children[0]);
+    }
 
     // loop through verses
     for (var i = 0; i < verses.length; i++) {
@@ -70,6 +78,7 @@ function writeLyrics (text) {
 }
 
 (function () {
+    'use strict';
     var tweet = document.querySelector('textarea#tweet');
     tweet.addEventListener('focus', updateTweetCounter);
     tweet.addEventListener('keyup', updateTweetCounter);
@@ -80,8 +89,10 @@ vagalume.musicInfoFromName(
     $('#search-artist').val(),
     $('#search-music').val(),
     function () {
+        'use strict';
         console.log('oncaptcha', arguments);
     }, function (data) {
+        'use strict';
         writeLyrics(data.music[0].lyrics);
         $('#music-name').html(data.music[0].name);
         $('#artist-name').html(data.artist.name);
