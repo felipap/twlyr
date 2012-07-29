@@ -64,7 +64,7 @@ function writeLyrics (text) {
 		}
 
 		lyricstag.appendChild(vtag);
-	};
+	}
 
 	Selector.addSelectionEvent();
 }
