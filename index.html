@@ -180,8 +180,8 @@ $(function (){
 	var parseHash = function (hash) {
 		console.log(hash);
 		if (!hash || hash.length < 3 || hash.slice(0, 2) !== '#!')
-			return 'default.html';
-		return hash.slice(2) + '.html';
+			return 'default';
+		return hash.slice(2);
 	}
 	var currentHash = false;
 	setInterval(function () {
