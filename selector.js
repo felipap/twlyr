@@ -6,7 +6,6 @@
 (function (window, document, undefined) {
     
     function removePunctuation(str) {
-        'use strict';
         return str.replace(/^\s|\s+$/g, '').replace(/[,.]+$/g, '');
     }
 
@@ -15,21 +14,18 @@
         unselectWords: function () {
             // Unselect words, by removing their "selected" class.
             var selected = document.querySelectorAll('.word.selected');
-            for (var i = 0; i < selected.length; i++) {
+            for (var i = 0; i < selected.length; i++)
                 selected[i].classList.remove('selected');
-            }
         },
 
         selectRange: function (a, b) {
             // make selection starting at A and ending at B
 
             var w = Selector.getRange(a, b);
-            for (var i = 0; i< w.length; i++) {
+            for (var i = 0; i< w.length; i++)
                 w[i].classList.add('selected');
-            }
-            if (w.length === 0) {
+            if (w.length == 0)
                 throw Error('no range selected!');
-            }
         },
 
         getSplitRange: function ( a, b ) {
@@ -40,12 +36,10 @@
             var i = 0;
             var w;
             while (w = words[i++]) {
-                if (selection.length === 0 || (words[i - 2].parentElement !== w.parentElement)) {
+                if (selection.length == 0 || (words[i - 2].parentElement !== w.parentElement))
                     selection.push([w]);
-                }
-                else {
+                else
                     selection[selection.length - 1].push(w);
-                }
             }
 
             return selection;
@@ -54,36 +48,26 @@
         getRange: function (a, b) {
             // return the list of words between (an including) A and B
 
-            if (!a || !b) {
+            if (!a || !b)
                 return [];
-            }
             
             var words = Array.prototype.slice.call(document.querySelectorAll('.word'));
-            var ia = words.indexOf(a);
-            var ib = words.indexOf(b);
-            var first, last;
+            var ia = words.indexOf(a)
+            var ib = words.indexOf(b)
 
-            if (ia < ib) {
-                first = ia;
-                last = ib;
-            }
-            else if (ia > ib) {
-                first = ib;
-                last = ia;
-            }
-            else {
-                return [a];  // ia === ib
-            }
+            if (ia < ib) 
+                var first = ia, last = ib;
+            else if (ia > ib) 
+                var first = ib, last = ia;
+            else return [a];  // ia === ib
 
             return words.slice(first, last+1);
         },
 
         getSelectionEnds: function () {
             // returns the extreme words in current selection process.
-            if (!hoverWord || !endWord) {
+            if (!hoverWord || !endWord)
                 throw Error('why isn\'t hoverWord/endWord set?');
-            }
-            
             return [hoverWord, endWord];
         },
 
@@ -98,11 +82,10 @@
             var lines = Selector.getSplitRange.apply(null, Selector.getSelectionEnds());
             var lpieces = [];
 
-            for (var i = 0; i < lines.length; i++) {
+            for (i = 0; i < lines.length; i++) {
                 var wpieces = [];
-                for (var j = 0; j < lines[i].length; j++) {
+                for (var j = 0; j < lines[i].length; j++)
                     wpieces.push(removePunctuation(lines[i][j].innerHTML));
-                }
                 lpieces.push(wpieces.join(' '));
             }
 
@@ -118,9 +101,8 @@
 
                 hoverWord = e.target;
 
-                if (!mouseDown) {
+                if (!mouseDown)
                     return;
-                }
         
                 if (!endWord) {
                     // cursor, after clicked, moved over to a word.
@@ -134,9 +116,8 @@
             }
             
             function mouseoutWord(e) {
-                if (hoverWord === e.target) {
+                if (hoverWord === e.target)
                     hoverWord = null;
-                }
             }
 
             words = words || document.querySelectorAll('.word'); // is Selector.ok?
@@ -154,9 +135,8 @@
     lastSelected = null; // the last word selected before 
     
     document.onmousedown = function (e) {
-        if (e.button !== 0) {
+        if (e.button !== 0)
             return; // exit if it isn't a left-click
-        }
 
         console.log("=> mousedown");
         mouseDown = true;
@@ -167,13 +147,13 @@
             // cursor is ALREADY above a word (so select it right away)
             // fire mouseover event to start selection of the current word
             // otherwise it'll wait until the mouse goes over another word.
-            var ev = document.createEvent("MouseEvents");
-            ev.initMouseEvent("mouseover");
-            hoverWord.dispatchEvent(ev);
+            var e = document.createEvent("MouseEvents");
+            e.initMouseEvent("mouseover");
+            hoverWord.dispatchEvent(e);
         }
-    };
+    }
 
-    document.onmouseup = function (e) {        
+    document.onmouseup = function ( e ) {        
         if (e.button == 0) { // left-click only
             mouseDown = false;
 
@@ -188,11 +168,9 @@
                         endWord = lastSelected = null;
                         Selector.updateTweetBox();
                         return;
-                    }
-                    else {
+                    } else
                         // else, update lastSelected
                         lastSelected = selected[0];
-                    }
                 }
             }
 
