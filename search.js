@@ -82,10 +82,8 @@ vagalume.musicInfoFromName(
 	function () {
 		console.log('oncaptcha', arguments);
 	}, function (data) {
-		d = data;
-		m = d.music[0];
-		writeLyrics(m.lyrics);
-		$('#music-name').html(d.music[0].name);
-		$('#artist-name').html(d.artist.name);
+		writeLyrics(data.music[0].lyrics);
+		$('#music-name').html(data.music[0].name);
+		$('#artist-name').html(data.artist.name);
 	}
 );

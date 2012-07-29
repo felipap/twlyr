@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
-	<script src="jqmin1.7.js" charset="utf-8"></script>
+	<script src="jquery.js" charset="utf-8"></script>
 	<script src="vagalume.js" charset="utf-8"></script>
 	<script src="selector.js" charset="utf-8"></script>
 
@@ -176,13 +176,13 @@ $('#searchbar form').submit(function (){
 	return false;
 });
 
-$(function (){
+(function (){
 	var parseHash = function (hash) {
 		console.log(hash);
 		if (!hash || hash.length < 3 || hash.slice(0, 2) !== '#!')
 			return 'default';
 		return hash.slice(2);
-	}
+	};
 	var currentHash = false;
 	setInterval(function () {
 		if (window.location.hash !== currentHash) {
@@ -216,7 +216,7 @@ $(function (){
 			});
 		}
 	}, 100);
-});
+}());
 
 </script>
 </body>
