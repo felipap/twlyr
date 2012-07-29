@@ -19,7 +19,7 @@ function enableTweet() {
 }
 
 function updateTweetCounter() {
-    // update characters counter in tweet textarea
+    /* update characters counter in tweet textarea */
     'use strict';
     var tweet = document.querySelector('textarea#tweet').value;
     var counter = document.querySelector('.twtcounter');
@@ -36,30 +36,30 @@ function updateTweetCounter() {
 }
 
 function writeLyrics(text) {
-    // write lyrics given text retrieved from vagalume's api
-    // lines must be separated by '\n' and verses by empty lines
+    /* write lyrics given text retrieved from vagalume's api */
+    /* lines must be separated by '\n' and verses by empty lines */
     'use strict';
     var verses = text.split('\n\n');
     var lyricstag = document.querySelector('.lyrics');
 
-    // clean lyrics
+    /* clean lyrics */
     while (lyricstag.children[0]) {
         lyricstag.removeChild(lyricstag.children[0]);
     }
 
-    // loop through verses
+    /* loop through verses */
     for (var i = 0; i < verses.length; i++) {
         var vtag = document.createElement('div');
         var lines = verses[i].split('\n');
         vtag.className = 'verse';
 
-        // loop through lines
+        /* loop through lines */
         for (var j = 0; j < lines.length; j++) {
             var ltag = document.createElement('div');
             var words = lines[j].split(' ');
             ltag.className = 'line';
 
-            // loop through words
+            /* loop through words */
             for (var k = 0; k < words.length; k++) {
                 var wtag = document.createElement('span');
                 wtag.className = 'word';
