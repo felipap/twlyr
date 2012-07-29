@@ -74,7 +74,7 @@ function writeLyrics (text) {
     tweet.addEventListener('focus', updateTweetCounter);
     tweet.addEventListener('keyup', updateTweetCounter);
     tweet.addEventListener('onchange', updateTweetCounter);
-})();
+}());
 
 vagalume.musicInfoFromName(
     $('#search-artist').val(),
