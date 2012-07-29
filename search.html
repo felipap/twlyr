@@ -69,8 +69,8 @@ function writeLyrics (text) {
 
 		// loop through lines
 		for (var l, i2=0; l=lines[i2]; i2++) {
-			ltag = document.createElement('div'),;
-				words = l.split(' ');
+			var ltag = document.createElement('div');
+			var words = l.split(' ');
 			ltag.className = 'line';
 
 			// loop through words
