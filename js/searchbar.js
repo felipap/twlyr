@@ -21,7 +21,7 @@
 		$.getJSON(monthlyRankURL, onData, onerror);
 	}
 
-	function _getArtistLyrics (artist, callback, onerror) {
+	function _getArtistSongs (artist, callback, onerror) {
 		var artistURL = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
 		$.getJSON(artistURL, callback, onerror)
 	}
@@ -64,8 +64,8 @@
 			}
 		}
 
-		this.getArtistLyrics = function (artist, callback, onerror) {
-			_getArtistLyrics(artist, function (data) {
+		this.getArtistSongs = function (artist, callback, onerror) {
+			_getArtistSongs(artist, function (data) {
 				if (!data.artist)
 					return onerror()
 				
@@ -90,7 +90,7 @@
 			if (!name)
 				return
 			else
-				_this.getArtistLyrics(name, function (list) {
+				_this.getArtistSongs(name, function (list) {
 					console.log('list of songs for', name, list)
 					$("#search-music").typeahead({ source: list, items: 10 })
 				})
