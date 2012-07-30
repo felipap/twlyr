@@ -1,4 +1,5 @@
 ﻿var vagalume = (function () {
+    
     var urlmodule = (function () {
         var forEachKey = (function () {
             if (Object.keys) {
@@ -94,6 +95,7 @@
             },
         }
     }());
+    
     var doQueryCaptcha = function (query, onCaptcha, onData) {
         function onPreData(data) {
             if (data && data.captcha) {
@@ -108,6 +110,7 @@
         }
         $.getJSON(query, onPreData);
     };
+    
     var _processMusicInfoData = function (data, onEnd) {
         if (!data || !data.type || data.type === 'notfound' ||
             !data.art || !data.mus || data.mus.length <= 0)
@@ -149,6 +152,7 @@
             onEnd(obj);
         }
     };
+
     return {
         musicListFromArtistUrl: function (artistUrl, onCaptcha, onEnd) {
             function onData (data) {
@@ -169,7 +173,7 @@
             if (typeof artistUrl !== 'string' ||
                 typeof onEnd !== 'function' ||
                 typeof onCaptcha !== 'function')
-                return vagalume;
+                return null;
         
             if (artistUrl.charAt(artistUrl.length - 1) != '/')
                 artistUrl += '/';
@@ -189,13 +193,13 @@
             if (!artistName ||
                 typeof onCaptcha !== 'function' ||
                 typeof onEnd !== 'function')
-                return vagalume;
+                return null;
                 
             console.log(encodeURIComponent(artistName));
             console.log(encodeURIComponent(musicName));
             
             doQueryCaptcha('http://www.vagalume.com.br/api/search.php?' +
-                     'art=' + encodeURIComponent(artistName) +
+                    'art=' + encodeURIComponent(artistName) +
                     '&mus=' + encodeURIComponent(musicName) +
                     '&extra=alb,ytid,artpic',
                     onCaptcha,
@@ -209,7 +213,7 @@
             if (!musicId ||
                 typeof onCaptcha !== 'function' ||
                 typeof onEnd !== 'function')
-                return vagalume;
+                return null;
                 
             doQueryCaptcha('http://www.vagalume.com.br/api/search.php?' +
                      'musid=' + encodeURIComponent(musicId) +

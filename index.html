@@ -8,7 +8,9 @@
 	<link href='main.css' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette' rel='stylesheet' type='text/css'>
 
-	<script src="jquery.min.js" charset="utf-8"></script>
+	<script src="js/jquery.min.js" charset="utf-8"></script>
+	<script src="js/vagalume.js" charset="utf-8"></script>
+	<script src="js/selector.js" charset="utf-8"></script>
 
 	<style>
 
@@ -56,12 +58,12 @@
 $('#search-artist').val('Coldplay');
 $('#search-music').val('The Scientist');
 
-$('#searchbar form').submit(function (){
-	var artist = encodeURIComponent($('#search-artist').val());
-	var music = encodeURIComponent($('#search-music').val());
+document.querySelector('#searchbar form').onsubmit = function () {
+	var artist = encodeURIComponent(document.querySelector('#search-artist').value);
+	var music = encodeURIComponent(document.querySelector('#search-music').value);
 	window.location.hash = '#!search:' + artist + ':' + music;
 	return false;
-});
+}
 
 (function (){
 	var parseHash = function (hash) {
