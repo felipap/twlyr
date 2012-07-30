@@ -4,9 +4,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
-	<script src="jqmin1.7.js" charset="utf-8"/></script>
-	<script src="vagalume.js" charset="utf-8"/></script>
-	<script src="selector.js" charset="utf-8"/></script>
+	<script src="jquery.js" charset="utf-8"></script>
+	<script src="vagalume.js" charset="utf-8"></script>
+	<script src="selector.js" charset="utf-8"></script>
 
 <style>
 
@@ -159,32 +159,16 @@
 			</form>
 		</div>
 	</div>
-
-	<div class="box left">
+	
+	<div id="content">
 		
-		<h4 id="artist-name"></h4>
-		<h4 id="music-name"></h4>
-		
-		<br>
-
-		<div class="tweet-box">
-			<textarea id="tweet"></textarea>
-
-			<div class="align-line">
-				<div class="twtcounter">0</div>
-				<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
-			</div>
-		</div>
-	</div>
-	<div class="box right">
-		<div class="lyrics">
-		</div>
 	</div>
 
 </div>
 
 <script>
 
+<<<<<<< HEAD
 function openTweetPopup () {
     
     var left   = ($(window).width()  - width)  / 2,
@@ -263,33 +247,54 @@ function writeLyrics (text) {
 
 (function () {
 
-	var tweet = document.querySelector("textarea#tweet")
-	tweet.addEventListener('focus', updateTweetCounter)
-	tweet.addEventListener('keyup', updateTweetCounter)
-	tweet.addEventListener('onchange', updateTweetCounter)
-
-})();
-
-$('#search-artist').val('Coldplay')
-$('#search-music').val('The Scientist')
-
-
-$('#searchbar form').submit(function () {
-	vagalume.musicInfoFromName(
-		$('#search-artist').val(),
-		$('#search-music').val(),
-		function () {
-			console.log('oncaptcha', arguments)
-		}, function (data) {
-			d = data
-			m = d.music[0]
-			writeLyrics(m.lyrics)
-			$("#music-name").html(d.music[0].name)
-			$("#artist-name").html(d.artist.name)
-		});
-	return false
+$('#searchbar form').submit(function (){
+	var artist = encodeURIComponent($('#search-artist').val());
+	var music = encodeURIComponent($('#search-music').val());
+	window.location.hash = '#!search:' + artist + ':' + music;
+	return false;
 });
 
+(function (){
+	var parseHash = function (hash) {
+		var ret = 'default';
+		if (!hash || hash.length < 4 || hash.slice(0, 2) !== '#!')
+			return ret;
+		return hash.slice(2).split(':')[0];
+	};
+	var currentHash = false;
+	setInterval(function () {
+		if (window.location.hash !== currentHash) {
+			var pagename = parseHash(window.location.hash);
+			currentHash = window.location.hash;
+			$('#content').html('');
+			$.ajax({
+				url: pagename + '.html',
+				async: true,
+				cache: true,
+				error: function (){
+					console.log('ajax error');
+				},
+				type: 'GET',
+				dataType: 'html',
+				timeout: 10000,
+				success: function (html) {
+					$('#content').html(html);
+					$.ajax({
+						url: pagename + '.js',
+						async: true,
+						cache: true,
+						error: function (){
+							console.log('ajax error');
+						},
+						type: 'GET',
+						dataType: 'script',
+						timeout: 10000,
+					});
+				},
+			});
+		}
+	}, 100);
+}());
 
 </script>
 </body>
