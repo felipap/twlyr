@@ -11,6 +11,7 @@
 	<script src="js/jquery.min.js" charset="utf-8"></script>
 	<script src="js/vagalume.js" charset="utf-8"></script>
 	<script src="js/selector.js" charset="utf-8"></script>
+	<script src="js/searchbar.js" charset="utf-8"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 
 	<style>
@@ -37,7 +38,7 @@
 	</div>
 
 	<footer>
-		2012 &reg created by <a href="#">@f03lipe</a> and <a href="#">@gabrielvianna</a>
+		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabriel_vianna">@gabrielvianna</a>
 	</footer>
 
 	<!--
@@ -51,83 +52,15 @@
 </div>
 <script>
 
-function toVagalumeName (name) {
-	// noobs!
-	return String(name).toLowerCase().replace(/\s+/,'-');
-}
-
-var thismonth = "http://www.vagalume.com.br/api/rank.php?type=art&period=month&limit=300&scope=internacional&period=month,lastmonth"
-var lastmonth = "http://www.vagalume.com.br/api/rank.php?type=art&period=month&limit=300&scope=internacional&period=lastmonth"
-
-function getTopArtists (callback) {
-	$.getJSON(thismonth, function (data) {
-		var top = data.art.month.internacional,
-			artists = [];
-		for (var i=0; i<top.length; i++)
-			artists.push(top[i].name);
-		callback(artists)
-	})
-}
+SearchBar = new SearchBar();
 
 function processMusicName (name) {
 	return String(name).replace(/\s?\(.*$/, '')
 }
 
-function inArray (value, array) {
-	for (var i=0; i<array.length; i++)
-		if (array[i] === value)
-			return true;
-	return false;
-}
-
-function getArtistLyrics (artist, callback, onerror) {
-	var url = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
-	console.log(url)
-	$.getJSON(url, function (data) {
-		if (!data.artist) {
-			onerror()
-			return
-		}
-		var all = data.artist.lyrics.item,
-			lyrics = [];
-		for (var i=0; i<all.length; i++) {
-			if (inArray(processMusicName(all[i].desc),lyrics))
-				continue;
-			lyrics.push(processMusicName(all[i].desc));
-		}
-		callback(lyrics);
-	})
-}
-
-$("#search-artist").focus(function () {
-	getTopArtists(function (list) {
-		console.log('adding', list.length, list)
-		$("#search-artist").typeahead({
-			source: list,
-		});
-	});
-})
-
-$("#search-music").focus(function () {
-	var v = $("#search-artist").val();
-	if (v != '') {
-		getArtistLyrics(v, function (list) {
-			console.log(list)
-			$("#search-music").typeahead({
-				source: list
-			})
-		})
-	}
-})
-
-document.querySelector('#searchbar form').onsubmit = function () {
-	var artist = encodeURIComponent(document.querySelector('#search-artist').value);
-	var music = encodeURIComponent(document.querySelector('#search-music').value);
-	window.location.hash = '#!search:' + artist + ':' + music;
-	return false;
-}
 
 (function (){
+	return
 	var parseHash = function (hash) {
 		var ret = 'default';
 		if (!hash || hash.length < 4 || hash.slice(0, 2) !== '#!')

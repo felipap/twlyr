@@ -2,8 +2,6 @@
 
 TODOs
 -----
-
-*add to interface:
-*- add option to capitalize words
-*- || remove punctuation
-*- || add music characters ( ♪ ♫ ♩ ♬ ♭ ♮ ♯ ) (or custom separators)
+* Add to UI option to capitalize words
+* Add to UI option to remove punctuation
+* Add music characters ( ♪ ♫ ♩ ♬ ♭ ♮ ♯ ) (or custom separators)
