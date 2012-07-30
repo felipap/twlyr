@@ -60,6 +60,7 @@
 	
 	.container {
 		width: 800px;
+		margin-top: 30px;
 	}
 
 	.verse {
@@ -185,8 +186,13 @@
 <script>
 
 function openTweetPopup () {
+    
+    var left   = ($(window).width()  - width)  / 2,
+        top    = ($(window).height() - height) / 2,
+        opts   = 'status=1,width=575,height=400,top='+top+',left'+left;
+
 	var text = document.querySelector('#tweet').value
-	window.open("https://twitter.com/intent/tweet?text="+escape(text))
+	window.open("https://twitter.com/intent/tweet?text="+escape(text), 'tweet', opts)
 }
 
 function disableTweet () {
