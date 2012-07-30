@@ -21,6 +21,11 @@
 		$.getJSON(monthlyRankURL, onData, onerror);
 	}
 
+	function _getArtistLyrics (artist, callback, onerror) {
+		var artistURL = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
+		$.getJSON(artistURL, callback, onerror)
+	}
+
 	function toVagalumeName (name) { // noobs!
 		return String(name).toLowerCase().replace(/\s+/,'-');
 	}
@@ -60,8 +65,7 @@
 		}
 
 		this.getArtistLyrics = function (artist, callback, onerror) {
-			var artistURL = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
-			$.getJSON(artistURL, function (data) {
+			_getArtistLyrics(artist, function (data) {
 				if (!data.artist)
 					return onerror()
 				
@@ -72,7 +76,7 @@
 					lyrics.push(processMusicName(all[i].desc));
 				}
 				callback(lyrics);
-			})
+			}, onerror)
 		}
 
 		document.querySelector("#search-artist").onfocus = function () {
