@@ -27,7 +27,7 @@
 	}
 
 	function toVagalumeName (name) { // noobs!
-		return String(name).toLowerCase().replace(/\s+/,'-');
+		return String(name).toLowerCase().replace(/^\s+|\s+$/g, '').replace(/\s+/,'-');
 	}
 	//
 
