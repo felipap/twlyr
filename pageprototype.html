@@ -117,7 +117,7 @@
 <div class="container">
 
 
-	<h1 class="twtlyr">Twtlyr</h1>
+	<h1 class="twtlyr">Twlyr</h1>
 	<h3 class="desc">share a verse on Twitter!</h3>
 	
 	<div>
@@ -133,6 +133,21 @@
 	<footer>
 		2012 &reg created by <a href="#">@f03lipe</a> and <a href="#">@gabrielvianna</a>
 	</footer>
+
+	<button onClick="doit()">change</button>
+
+<script>
+
+function doit () {
+	var e = document.querySelector('.twtlyr');
+	if (e.innerHTML === 'Twtlyr')
+		e.innerHTML = 'Twlyr';
+	else
+		e.innerHTML = 'Twtlyr';
+
+}
+
+</script>
 
 </div>
 
