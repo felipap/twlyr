@@ -11,6 +11,7 @@
 	<script src="js/jquery.min.js" charset="utf-8"></script>
 	<script src="js/vagalume.js" charset="utf-8"></script>
 	<script src="js/selector.js" charset="utf-8"></script>
+	<script src="bootstrap/js/bootstrap.min.js"></script>
 
 	<style>
 	.container { margin-top: 200px; }
@@ -28,8 +29,8 @@
 	<div>
 		<div id="searchbar">
 			<form class="form-search">
-				<input type="text" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
-				<input type="text" placeholder="choose a song" class="input-medium search-query" id="search-music">
+				<input type="text" autocomplete="off" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
+				<input type="text" autocomplete="off" placeholder="choose a song" class="input-medium search-query" id="search-music">
 				<button type="submit" class="btn btn-warning btn-large">Search</button>
 			</form>
 		</div>
@@ -46,19 +47,85 @@
 		</div>
 	</div>
 	-->
-	
+
 </div>
 <script>
 
-$('#search-artist').val('Coldplay');
-$('#search-music').val('The Scientist');
+function toVagalumeName (name) {
+	// noobs!
+	return String(name).toLowerCase().replace(/\s+/,'-');
+}
 
-$('#searchbar form').submit(function (){
-	var artist = encodeURIComponent($('#search-artist').val());
-	var music = encodeURIComponent($('#search-music').val());
+var thismonth = "http://www.vagalume.com.br/api/rank.php?type=art&period=month&limit=300&scope=internacional&period=month,lastmonth"
+var lastmonth = "http://www.vagalume.com.br/api/rank.php?type=art&period=month&limit=300&scope=internacional&period=lastmonth"
+
+function getTopArtists (callback) {
+	$.getJSON(thismonth, function (data) {
+		var top = data.art.month.internacional,
+			artists = [];
+		for (var i=0; i<top.length; i++)
+			artists.push(top[i].name);
+		callback(artists)
+	})
+}
+
+function processMusicName (name) {
+	return String(name).replace(/\s?\(.*$/, '')
+}
+
+function inArray (value, array) {
+	for (var i=0; i<array.length; i++)
+		if (array[i] === value)
+			return true;
+	return false;
+}
+
+function getArtistLyrics (artist, callback, onerror) {
+	var url = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
+	console.log(url)
+	$.getJSON(url, function (data) {
+		if (!data.artist) {
+			onerror()
+			return
+		}
+		var all = data.artist.lyrics.item,
+			lyrics = [];
+		for (var i=0; i<all.length; i++) {
+			if (inArray(processMusicName(all[i].desc),lyrics))
+				continue;
+			lyrics.push(processMusicName(all[i].desc));
+		}
+		callback(lyrics);
+	})
+}
+
+$("#search-artist").focus(function () {
+	getTopArtists(function (list) {
+		console.log('adding', list.length, list)
+		$("#search-artist").typeahead({
+			source: list,
+		});
+	});
+})
+
+$("#search-music").focus(function () {
+	var v = $("#search-artist").val();
+	if (v != '') {
+		getArtistLyrics(v, function (list) {
+			console.log(list)
+			$("#search-music").typeahead({
+				source: list
+			})
+		})
+	}
+})
+
+document.querySelector('#searchbar form').onsubmit = function () {
+	var artist = encodeURIComponent(document.querySelector('#search-artist').value);
+	var music = encodeURIComponent(document.querySelector('#search-music').value);
 	window.location.hash = '#!search:' + artist + ':' + music;
 	return false;
-});
+}
 
 (function (){
 	var parseHash = function (hash) {
