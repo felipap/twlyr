@@ -1,166 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head>	
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Twlyr - Share a Song!</title>
 
-	<link rel="stylesheet" href="bootstrap/css/bootstrap.css"></link>
+	<link href="bootstrap/css/bootstrap.css" rel="stylesheet"></link>
+	<link href='main.css' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette' rel='stylesheet' type='text/css'>
+
 	<script src="jquery.min.js" charset="utf-8"></script>
-	<script src="vagalume.js" charset="utf-8"></script>
-	<script src="selector.js" charset="utf-8"></script>
 
-<style>
+	<style>
 
-	#searchbar {
-		display: table;
-		margin: 0 auto;
+		.box.left {
+			width: 380px;
+			float: left;
+			padding: 10px 0;
+		}
 
-		min-height: 20px;
-		padding: 19px;
-		margin-bottom: 20px;
-		
-		background-color: whiteSmoke;
-		
-		border: 1px solid #EEE;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		
-		-webkit-border-radius: 4px;
-		-moz-border-radius: 4px;
-		border-radius: 4px;
-		
-		-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-		-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-	}
+		.box.right {
+			float: right;
+			width: 400px;
+		}
 
-	#searchbar form {
-		margin: 0;
-	}
+	</style>
 
-	#searchbar input[type=text] {
-		line-height: 19px;
-		font-size: 16px;
-		padding: 9px;
-		width: 200px;
-		box-shadow: none;
-	}
-
-	#searchbar input[type=text]:hover {
-		border-color: #08C;
-		text-shadow: none;
-	}
-
-	#searchbar button NOT {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
-		border-top-right-radius: 5px;
-		border-bottom-right-radius: 5px;
-	}
-
-	/****************/
-	
-	.container {
-		width: 800px;
-	}
-
-	.verse {
-		font: 15px "Open Sans", Arial;
-
-		display: table;
-		padding: 10px;
-	}
-
-	.line {
-		font-size: 0; /* remove space between spans */
-		/* text-align: justify; */
-	}
-
-	.word {
-		font-size: 15px;
-		padding: 2px 3px;
-	}
-
-	.word.selected {
-		background: #08C;
-		color: white;
-	}
-
-	.lyrics {
-		float: right;
-		-webkit-user-select: none;
-		outline: 1px solid #ddd;
-
-		min-height: 200px;
-		width: 100%;
-	}
-
-	/****************/
-
-	.box.left {
-		width: 380px;
-		float: left;
-		padding: 10px 0;
-	}
-
-	.box.right {
-		float: right;
-		width: 400px;
-	}
-
-	/****************/
-
-	textarea#tweet {
-		width: 350px;
-		font-size: 15px;
-		height: 70px;
-		resize: vertical;
-	}
-
-	.align-line {
-		text-align: right;
-		height: 30px;
-	}
-
-	.twtcounter {
-		float: left;
-		padding: 5px 10px;
-	}
-	.twtcounter.exceed { color: red; }
-
-	.tweet-box {
-		background: whiteSmoke;
-		box-shadow: 0 0 0 1px #ddd;
-		border-radius: 5px;
-		padding: 10px;
-	}
-
-	.tweet-box.blue { background: #08C; }
-	.tweet-box.blue .twtcounter { color: white; }
-
-	#tweet-button {
-		float: right;
-		font-weight: bold;
-	}
-
-</style>
+	<style>
+	.container { margin-top: 50px; }
+	</style>
 
 </head>
 <body>
 
 <div class="container">
-	
-	<div>
-		<h2>Search a song</h2>
+
+
+	<div class="inline-search-bar">
+		<div class="twlyr medium">Twlyr</div>
 		<div id="searchbar">
 			<form class="form-search">
-				<input type="text" placeholder="le artist" class="input-medium search-query" id="search-artist">
-				<input type="text" placeholder="le song" class="input-medium search-query" id="search-music">
-				<button type="submit" class="btn btn-info btn-large">Search</button>
+				<input type="text" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
+				<input type="text" placeholder="choose a song" class="input-medium search-query" id="search-music">
+				<button type="submit" class="btn btn-warning btn-large">Search</button>
 			</form>
 		</div>
 	</div>
 	
 	<div id="content">
-		
 	</div>
 
 </div>
@@ -169,7 +55,6 @@
 
 $('#search-artist').val('Coldplay');
 $('#search-music').val('The Scientist');
-
 
 $('#searchbar form').submit(function (){
 	var artist = encodeURIComponent($('#search-artist').val());

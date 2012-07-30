@@ -1,21 +1,22 @@
 
 .beta-strip {
-	position: absolute;
-
+	position: fixed;
 	top: 30px;
 	right: -50px;
+	width: 200px;
 
 	font: bold 20px/40px "Berkshire Swash", "Open Sans";
-
-	background: #FA0;
-	width: 200px;
 	text-align: center;
+	
 	color: white;
 	text-shadow: 0 0 5px #777;
 	box-shadow: 0 0 5px black;
+	background: #FA0;
 
 	-webkit-transform:rotate(45deg);
 	-moz-transform:rotate(45deg);
+	-ms-transform:rotate(45deg);
+	-o-transform:rotate(45deg);
 	transform:rotate(45deg);
 
 	background: rgb(255,214,94); /* Old browsers */
@@ -28,7 +29,9 @@
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd65e', endColorstr='#febf04',GradientType=0 ); /* IE6-9 */
 }
 
-/*****************************/
+/************************************/
+/******** SEACH BAR
+*/ 
 
 #searchbar {
 	display: table;
@@ -76,6 +79,9 @@
 	border-bottom-right-radius: 5px;
 }
 
+/************************************/
+/******** BODY and .CONTAINER
+*/
 
 body {
 	background: white; whiteSmoke;
@@ -84,21 +90,30 @@ body {
 
 .container {
 	width: 800px;
-	margin-top: 200px;
 }
 
 * {
-	outdsline: 1px solid black;
+	osutline: 1px solid black;
 }
 
-.twtlyr {
+/************************************/
+
+h1.twlyr {
+	margin-bottom: 10px;
+	z-index: 1000;
+}
+
+.twlyr {
 	color: #09C;
 	text-align: center;
 	font: bold 100px/100px "Berkshire Swash", "Open Sans";
 	text-shadow: -5px 5px #DDD;
-	z-index: 1000;
-	position: relative;
-	margin-bottom: 10px;
+}
+
+.twlyr.medium {
+	font-size: 70px;
+	line-height: 70px;
+	text-shadow: -3px 3px #DDD;
 }
 
 .desc {
@@ -124,4 +139,88 @@ footer:hover { opacity: 1; }
 footer a, footer a:active, footer a:hover, footer a:visited {
 	font-weight: bold;
 	text-decoration: none;
+}
+
+/************************************/
+/******** LYRICS
+*/
+
+.lyrics {
+	float: right;
+	-webkit-user-select: none;
+	outline: 1px solid #ddd;
+
+	min-height: 200px;
+	width: 100%;
+}
+
+.verse {
+	font: 15px "Open Sans", Arial;
+
+	display: table;
+	padding: 10px;
+}
+
+.line {
+	font-size: 0; /* remove space between spans */
+	/* text-align: justify; */
+}
+
+.word {
+	font-size: 15px;
+	padding: 2px 3px;
+}
+
+.word.selected {
+	background: #08C;
+	color: white;
+}
+
+/************************************/
+/******** TWEET BOX
+*/
+
+textarea#tweet {
+	width: 350px;
+	font-size: 15px;
+	height: 70px;
+	resize: vertical;
+}
+
+.align-line {
+	text-align: right;
+	height: 30px;
+}
+
+.twtcounter {
+	float: left;
+	padding: 5px 10px;
+}
+.twtcounter.exceed { color: red; }
+
+.tweet-box {
+	background: whiteSmoke;
+	box-shadow: 0 0 0 1px #ddd;
+	border-radius: 5px;
+	padding: 10px;
+}
+
+.tweet-box.blue { background: #08C; }
+.tweet-box.blue .twtcounter { color: white; }
+
+#tweet-button {
+	float: right;
+	font-weight: bold;
+}
+
+/************************************/
+/******** INLINE-SEARCH-BAR
+*/
+
+.inline-search-bar > * {
+	float: left;
+}
+
+.inline-search-bar .twlyr {
+	margin: 0 30px;
 }
