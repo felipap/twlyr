@@ -1,7 +1,7 @@
 // selector.js
 
 // TODO:
-// compatibility issues for using elm.classList?
+// solve compatibility issues for using elm.classList?
 
 (function (window, document, undefined) {
     
