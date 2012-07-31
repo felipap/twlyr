@@ -59,12 +59,13 @@
 $('#search-artist').val('Coldplay');
 $('#search-music').val('The Scientist');
 
-document.querySelector('#searchbar form').onsubmit = function () {
+$('#searchbar form').submit(function () {
+	console.log("porco \o/");
 	var artist = encodeURIComponent(document.querySelector('#search-artist').value);
 	var music = encodeURIComponent(document.querySelector('#search-music').value);
 	window.location.hash = '#!search:' + artist + ':' + music;
 	return false;
-}
+});
 
 (function (){
 	var parseHash = function (hash) {
