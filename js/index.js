@@ -1,0 +1,78 @@
+﻿$('#search-artist').val('Coldplay');
+$('#search-music').val('The Scientist');
+
+$('#searchbar form').submit(function () {
+    search(
+        $('#search-artist').val(),
+        $('#search-music').val()
+    );
+    return false;
+});
+
+(function (){
+    $.ajaxSetup({
+        async: true,
+        cache: true,
+        error: function (){
+            console.log('ajax error');
+        },
+        type: 'GET',
+        dataType: 'html',
+        timeout: 10000,
+    });
+
+    var parseHash = function (hash) {
+        var page = 'default';
+        if (hash && hash.length >= 3 && hash.slice(0, 2) === '#!')
+            page = hash.slice(2).split(':')[0].toLowerCase();
+        switch (page)
+        {
+            case 'default':
+                return {
+                    html: 'default.html',
+                    dependencies: [],
+                }
+            case 'error':
+                return {
+                    html: 'error.html',
+                    dependencies: [],
+                }
+            default:
+                return {
+                    html: 'lyrics.html',
+                    dependencies: [
+                        'js/selector.js',
+                        'js/search.js'
+                    ],
+                };
+        }
+    };
+    
+    var currentHash = false;
+    setInterval(function () {
+        if (window.location.hash !== currentHash) {
+            var pageInfo = parseHash(window.location.hash);
+            currentHash = window.location.hash;
+            $('#content').html('');
+            $.ajax({
+                url: pageInfo.html,
+                success: function (html) {
+                    $('#content').html(html);
+                    var i = 0;
+                    function runNextDepencency(page) {
+                        if (i >= page.dependencies.length)
+                            return;
+                        $.ajax({
+                            url: page.dependencies[i],
+                            success: function () {
+                                i++;
+                                runNextDependency(page);
+                            },
+                        });
+                    }
+                    runNextDependency(page);
+                },
+            });
+        }
+    }, 100);
+}());

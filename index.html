@@ -10,8 +10,7 @@
 
 	<script src="js/jquery.min.js" charset="utf-8"></script>
 	<script src="js/vagalume.js" charset="utf-8"></script>
-	<script src="js/selector.js" charset="utf-8"></script>
-	<script src="js/tweet.js" charset="utf-8"></script>
+	<script src="js/search.js" charset="utf-8"></script>
 
 	<style>
 
@@ -54,61 +53,6 @@
 
 </div>
 
-<script>
-
-$('#search-artist').val('Coldplay');
-$('#search-music').val('The Scientist');
-
-$('#searchbar form').submit(function () {
-	console.log("porco \o/");
-	var artist = encodeURIComponent(document.querySelector('#search-artist').value);
-	var music = encodeURIComponent(document.querySelector('#search-music').value);
-	window.location.hash = '#!search:' + artist + ':' + music;
-	return false;
-});
-
-(function (){
-	var parseHash = function (hash) {
-		var ret = 'default';
-		if (!hash || hash.length < 4 || hash.slice(0, 2) !== '#!')
-			return ret;
-		return hash.slice(2).split(':')[0];
-	};
-	var currentHash = false;
-	setInterval(function () {
-		if (window.location.hash !== currentHash) {
-			var pagename = parseHash(window.location.hash);
-			currentHash = window.location.hash;
-			$('#content').html('');
-			$.ajax({
-				url: pagename + '.html',
-				async: true,
-				cache: true,
-				error: function (){
-					console.log('ajax error');
-				},
-				type: 'GET',
-				dataType: 'html',
-				timeout: 10000,
-				success: function (html) {
-					$('#content').html(html);
-					$.ajax({
-						url: 'js/' + pagename + '.js',
-						async: true,
-						cache: true,
-						error: function (){
-							console.log('ajax error');
-						},
-						type: 'GET',
-						dataType: 'script',
-						timeout: 10000,
-					});
-				},
-			});
-		}
-	}, 100);
-}());
-
-</script>
+<script src="js/index.js" charset="utf-8"></script>
 </body>
 </html>

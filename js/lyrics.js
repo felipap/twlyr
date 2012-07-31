@@ -1,6 +1,4 @@
-﻿
-function TweetBox() {
-
+﻿(function () {
     function openTweetPopup () {
         var text = document.querySelector('#tweet').value;
         window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
@@ -78,16 +76,26 @@ function TweetBox() {
         tweet.addEventListener('keyup', updateTweetCounter);
         tweet.addEventListener('onchange', updateTweetCounter);
     }());
+    
+    function getMusicId() {
+        if (window.location.hash)
+            return window.location.hash.slice(2);
+        else
+            return '';
+    }
 
-    vagalume.musicInfoFromName(
-        $('#search-artist').val(),
-        $('#search-music').val(),
+    vagalume.getMusicInfoFromId(
+        getMusicId(),
         function () {
             console.log('oncaptcha', arguments);
         }, function (data) {
-            writeLyrics(data.music[0].lyrics);
-            $('#music-name').html(data.music[0].name);
+            if (!data.music)
+                window.location.hash = '#!error:2';
+                return;
+            }
+            writeLyrics(data.music.lyrics);
+            $('#music-name').html(data.music.name);
             $('#artist-name').html(data.artist.name);
         }
     );
-}
+}());
