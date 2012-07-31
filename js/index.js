@@ -42,7 +42,7 @@ $('#searchbar form').submit(function () {
                     html: 'lyrics.html',
                     dependencies: [
                         'js/selector.js',
-                        'js/search.js'
+                        'js/lyrics.js'
                     ],
                 };
         }
