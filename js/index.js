@@ -70,7 +70,7 @@ $('#searchbar form').submit(function () {
                             },
                         });
                     }
-                    runNextDependency(page);
+                    runNextDependency(pageInfo);
                 },
             });
         }
