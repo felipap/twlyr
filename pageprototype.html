@@ -51,58 +51,10 @@
 
 </div>
 <script>
+b = document.querySelector('#search-music')
 
 SearchBar = new SearchBar();
 
-function processMusicName (name) {
-	return String(name).replace(/\s?\(.*$/, '')
-}
-
-
-(function (){
-	return
-	var parseHash = function (hash) {
-		var ret = 'default';
-		if (!hash || hash.length < 4 || hash.slice(0, 2) !== '#!')
-			return ret;
-		return hash.slice(2).split(':')[0];
-	};
-	var currentHash = false;
-	setInterval(function () {
-		if (window.location.hash !== currentHash) {
-			var pagename = parseHash(window.location.hash);
-			currentHash = window.location.hash;
-			$('#content').html('');
-			$.ajax({
-				url: pagename + '.html',
-				async: true,
-				cache: true,
-				error: function (){
-					console.log('ajax error');
-				},
-				type: 'GET',
-				dataType: 'html',
-				timeout: 10000,
-				success: function (html) {
-					$('#content').html(html);
-					$.ajax({
-						url: pagename + '.js',
-						async: true,
-						cache: true,
-						error: function (){
-							console.log('ajax error');
-						},
-						type: 'GET',
-						dataType: 'script',
-						timeout: 10000,
-					});
-				},
-			});
-		}
-	}, 100);
-}());
-
 </script>
-
 </body>
 </html>

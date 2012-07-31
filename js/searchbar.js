@@ -5,6 +5,7 @@
 	'use strict';
 
 	// put these in vagalume.js?
+
 	function _getTopArtists (callback, onerror) {
 		var monthlyRankURL = "http://www.vagalume.com.br/api/rank.php?\
 			type=art&period=month&limit=300&scope=internacional&period=month"
@@ -21,28 +22,28 @@
 		$.getJSON(monthlyRankURL, onData, onerror);
 	}
 
-	function _getArtistSongs (artist, callback, onerror) {
-		var artistURL = 'http://www.vagalume.com.br/'+toVagalumeName(artist)+'/index.js';
-		$.getJSON(artistURL, callback, onerror)
-	}
-
-	function toVagalumeName (name) { // noobs!
-		return String(name).toLowerCase().replace(/^\s+|\s+$/g, '').replace(/\s+/,'-');
-	}
 	//
 
-	function inArray (value, array) {
-		for (var i=0; i<array.length; i++)
-			if (array[i] === value)
-				return true;
-		return false;
-	}
+
+
 
 	// do stuff;
 	window.SearchBar = function () {
-
+		
 		this.topArtists = null
 		var _this = this;
+
+		this.changeTypeahead = function (elem, obj) {
+			// this updates 
+			if ($(elem).data('typeahead')) {
+				for (var p in obj)
+				if (obj.hasOwnProperty(p))
+					$(elem).data('typeahead')[p] = obj[p]
+			} else {
+				console.log('typeahead didn\'t exist on', elem)
+				$(elem).typeahead(obj)
+			}
+		}
 
 		this.getTopArtists = function (callback, onerror) {
 			function onData (top) {
@@ -64,36 +65,33 @@
 			}
 		}
 
-		this.getArtistSongs = function (artist, callback, onerror) {
-			_getArtistSongs(artist, function (data) {
-				if (!data.artist)
-					return onerror()
-				
-				var all = data.artist.lyrics.item, lyrics = [];
-				for (var i=0; i<all.length; i++) {
-					if (inArray(processMusicName(all[i].desc),lyrics))
-						continue;
-					lyrics.push(processMusicName(all[i].desc));
-				}
-				callback(lyrics);
-			}, onerror)
-		}
-
 		document.querySelector("#search-artist").onfocus = function () {
 			_this.getTopArtists(function (list) {
-				$("#search-artist").typeahead({	source: list, items: 10 });
+				_this.changeTypeahead($("#search-artist"), { source: list });
 			});
 		}
 
 		document.querySelector("#search-music").onfocus = function () {
 			var name = document.querySelector("#search-artist").value;
-			if (!name)
-				return
-			else
-				_this.getArtistSongs(name, function (list) {
-					console.log('list of songs for', name, list)
-					$("#search-music").typeahead({ source: list, items: 10 })
-				})
+			if (!name) {
+				_this.changeTypeahead($("#search-music"), { source: [] });
+			}
+
+			function onData (bool) {
+				function onData (list) {
+					console.log('list of songs for', name, list);
+					_this.changeTypeahead($("#search-music"), { source: list });
+				}
+				if (!bool) { // artist was not found
+					console.log('artist', name, 'not found');
+					_this.changeTypeahead($("#search-artist"), { source: [] });
+					return;
+				}
+
+				vagalume.getArtistSongs(name, onData);				
+			}
+
+			vagalume.artistExists(name, onData);
 		}
 
 		document.querySelector('#searchbar form').onsubmit = function () {
