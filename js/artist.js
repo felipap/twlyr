@@ -4,13 +4,11 @@
             return '';
         return 'http://www.vagalume.com.br/' + window.location.hash.slice(2).split(':')[1] + '/';
     }
-
+    
     vagalume.getMusicListFromArtistUrl(
         getArtistUrl(),
-        function () {
-            console.log('oncaptcha', arguments);
-        }, function (data) {
-            if (!data.length === 0) {
+        function (data) {
+            if (data.length === 0) {
                 window.location.hash = '#!error:2';
                 return;
             }

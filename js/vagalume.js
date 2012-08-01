@@ -114,28 +114,27 @@
     };
 
     return {
-        getMusicListFromArtistUrl: function (artistUrl, onCaptcha, onEnd) {
-            function onData (data) {
-                if (!data || !data.lyrics || !data.lyrics.item) {
+        getMusicListFromArtistUrl: function (artistUrl, onEnd) {
+            function onData (data) {                  
+                if (!data || !data.artist || !data.artist.lyrics || !data.artist.lyrics.item) {
                     onEnd([]);
                     return;
                 }
                 var musicList = [];
-                for (var i = 0; i < data.lyrics.item.length; i++) {
+                for (var i = 0; i < data.artist.lyrics.item.length; i++) {
                     musicList.push({
-                        id: data.lyrics.item[i].id,
-                        name: data.lyrics.item[i].desc,
+                        id: data.artist.lyrics.item[i].id,
+                        name: data.artist.lyrics.item[i].desc,
                     });
                 }
                 onEnd(musicList);
             }
             
             if (typeof artistUrl !== 'string' ||
-                typeof onEnd !== 'function' ||
-                typeof onCaptcha !== 'function')
+                typeof onEnd !== 'function')
                 return vagalume;
         
-            if (artistUrl.charAt(artistUrl.length - 1) != '/')
+            if (artistUrl.charAt(artistUrl.length - 1) !== '/')
                 artistUrl += '/';
                 
             $.getJSON(artistUrl + 'index.js', onData);
