@@ -13,8 +13,8 @@ $('#searchbar form').submit(function () {
     $.ajaxSetup({
         async: true,
         cache: true,
-        error: function (){
-            console.log('ajax error');
+        error: function (jqXHR, textStatus, errorThrown){
+            console.log('AJAX ERROR', jqXHR, textStatus, errorThrown);
         },
         type: 'GET',
         dataType: 'html',
