@@ -32,10 +32,19 @@ $('#searchbar form').submit(function () {
                     html: 'default.html',
                     dependencies: [],
                 }
+            case 'artist':
+                return {
+                    html: 'artist.html',
+                    dependencies: [
+                        'js/artist.js'
+                    ],
+                };
             case 'error':
                 return {
                     html: 'error.html',
-                    dependencies: [],
+                    dependencies: [
+                        'js/error.js'
+                    ],
                 }
             default:
                 return {

@@ -5,9 +5,14 @@
             window.location.hash = '#!error:1';
         } else if (!data.music) {
             // We have a valid artist name and URL here, but the music wasn't found.
-            // Show a music list from the found artist, and let the user choose one.
-            // To be implemented.
-            window.location.hash = '#!error:2';
+            var urlPath = data.artist.url.split('/');
+            var artistUrl = '';
+            for (var i = urlPath.length - 1; i >= 0; i++) {
+                artistUrl = urlPath[i];
+                if (artistUrl.length !== 0)
+                    break;
+            }
+            window.location.hash = '#!artist:' + artistUrl;
         } else {
             // Perfect match, redirect to the music page.
             window.location.hash = '#!' + data.music.id;
