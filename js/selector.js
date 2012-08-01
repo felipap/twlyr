@@ -6,12 +6,11 @@
 (function (window, document, undefined) {
     "use strict";
 
-    String.prototype.trim = String.prototype.trim || function() {
-        return String(this).replace(/^\s+|\s+$/g, '')
-    }
-
-    String.prototype.removePunctuation = function () {
-        return str.trim().replace(/[,.]+$/g, '')
+    function removePunctuation(str) {
+        if (String.prototype.trim)
+            return str.trim().replace(/[,.]+$/g, '');
+        else
+            return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '');
     }
 
     window.Selector = {
@@ -85,7 +84,7 @@
                 for (var i = 0; i < lines.length; i++) {
                     var wpieces = []
                     for (var j = 0; j < lines[i].length; j++)
-                        wpieces.push(lines[i][j].innerHTML.removePunctuation())
+                        wpieces.push(removePunctuation(lines[i][j].innerHTML))
                     lpieces.push(wpieces.join(' '))
                 }
                 var tweet = lpieces.join(" ♪ ") // ♪ ♫ ♩ ♬ ♭ ♮ ♯ /

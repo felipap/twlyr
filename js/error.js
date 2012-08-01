@@ -23,7 +23,7 @@
             break;
     }
     
-    $('#error-title').text(errorTitle);
-    $('#error-desc').text(errorDesc);
+    $('#error-title').html(errorTitle);
+    $('#error-desc').html(errorDesc);
     
 }(window.location.hash));
