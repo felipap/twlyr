@@ -9,7 +9,7 @@
             var artistUrl = '';
             for (var i = urlPath.length - 1; i >= 0; i++) {
                 artistUrl = urlPath[i];
-                if (artistUrl.length !== 0)
+                if (artistUrl && artistUrl.length !== 0)
                     break;
             }
             window.location.hash = '#!artist:' + artistUrl;
