@@ -7,7 +7,7 @@
             // We have a valid artist name and URL here, but the music wasn't found.
             var urlPath = data.artist.url.split('/');
             var artistUrl = '';
-            for (var i = urlPath.length - 1; i >= 0; i++) {
+            for (var i = urlPath.length - 1; i >= 0; i--) {
                 artistUrl = urlPath[i];
                 if (artistUrl && artistUrl.length !== 0)
                     break;
