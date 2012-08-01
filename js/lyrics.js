@@ -69,8 +69,6 @@
 
         Selector.addSelectionEvent();
     }
-    
-    console.log('lyrics.js');
 
     (function () {
         var tweet = document.querySelector('textarea#tweet');
@@ -85,16 +83,13 @@
         else
             return '';
     }
-    
-    console.log(getMusicId());
 
     vagalume.getMusicInfoFromId(
         getMusicId(),
         function () {
             console.log('oncaptcha', arguments);
         }, function (data) {
-            console.log(data);
-            if (!data.music)
+            if (!data.music) {
                 window.location.hash = '#!error:2';
                 return;
             }
