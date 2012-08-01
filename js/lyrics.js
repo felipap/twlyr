@@ -1,82 +1,84 @@
-﻿(function () {
-    function openTweetPopup () {
-        var text = document.querySelector('#tweet').value;
-        window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
-    }
+﻿// dá merge nessas funções com o selector.js, pra elas não ficarem globais
 
-    function disableTweet () {
-        var counter = document.querySelector('.twtcounter');
-        counter.classList.add('exceed');
-        document.querySelector('#tweet-button').classList.add('disabled');
-    }
+function openTweetPopup () {
+    var text = document.querySelector('#tweet').value;
+    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
+}
 
-    function enableTweet () {
-        var counter = document.querySelector('.twtcounter');
-        counter.classList.remove('exceed');
-        document.querySelector('#tweet-button').classList.remove('disabled');
-    }
+function disableTweet () {
+    var counter = document.querySelector('.twtcounter');
+    counter.classList.add('exceed');
+    document.querySelector('#tweet-button').classList.add('disabled');
+}
 
-    function updateTweetCounter () {
-        // update characters counter in tweet textarea
-        var tweet =  document.querySelector('textarea#tweet').value;
-        var counter = document.querySelector('.twtcounter');
-        
-        counter.innerHTML = tweet.length;
-        if (tweet.length > 140)
-            disableTweet();
-        else enableTweet();
-        
-        return true;
-    }
+function enableTweet () {
+    var counter = document.querySelector('.twtcounter');
+    counter.classList.remove('exceed');
+    document.querySelector('#tweet-button').classList.remove('disabled');
+}
 
-    function writeLyrics (text) {
-        // write lyrics given text retrieved from vagalume's api
-        // lines must be separated by '\n' and verses by empty lines
+function updateTweetCounter () {
+    // update characters counter in tweet textarea
+    var tweet =  document.querySelector('textarea#tweet').value;
+    var counter = document.querySelector('.twtcounter');
+    
+    counter.innerHTML = tweet.length;
+    if (tweet.length > 140)
+        disableTweet();
+    else enableTweet();
+    
+    return true;
+}
 
-        var verses = text.split('\n\n');
-        var lyricstag = document.querySelector('.lyrics');
+function writeLyrics (text) {
+    // write lyrics given text retrieved from vagalume's api
+    // lines must be separated by '\n' and verses by empty lines
 
-        // clean lyrics
-        while (lyricstag.children[0])
-            lyricstag.removeChild(lyricstag.children[0]);
+    var verses = text.split('\n\n');
+    var lyricstag = document.querySelector('.lyrics');
 
-        // loop through verses
-        for (var i = 0; i < verses.length; i++) {
-            var vtag = document.createElement('div');
-            var lines = verses[i].split('\n');
-            vtag.className = 'verse';
+    // clean lyrics
+    while (lyricstag.children[0])
+        lyricstag.removeChild(lyricstag.children[0]);
 
-            // loop through lines
-            for (var j = 0; j < lines.length; j++) {
-                var ltag = document.createElement('div');
-                var words = lines[j].split(' ');
-                ltag.className = 'line';
+    // loop through verses
+    for (var i = 0; i < verses.length; i++) {
+        var vtag = document.createElement('div');
+        var lines = verses[i].split('\n');
+        vtag.className = 'verse';
 
-                // loop through words
-                for (var k = 0; k < words.length; k++) {
-                    var wtag = document.createElement('span');
-                    wtag.className = 'word';
-                    wtag.innerHTML = words[k];
+        // loop through lines
+        for (var j = 0; j < lines.length; j++) {
+            var ltag = document.createElement('div');
+            var words = lines[j].split(' ');
+            ltag.className = 'line';
 
-                    ltag.appendChild(wtag);
-                }
+            // loop through words
+            for (var k = 0; k < words.length; k++) {
+                var wtag = document.createElement('span');
+                wtag.className = 'word';
+                wtag.innerHTML = words[k];
 
-                vtag.appendChild(ltag);
+                ltag.appendChild(wtag);
             }
 
-            lyricstag.appendChild(vtag);
+            vtag.appendChild(ltag);
         }
 
-        Selector.addSelectionEvent();
+        lyricstag.appendChild(vtag);
     }
 
-    (function () {
-        var tweet = document.querySelector('textarea#tweet');
-        tweet.addEventListener('focus', updateTweetCounter);
-        tweet.addEventListener('keyup', updateTweetCounter);
-        tweet.addEventListener('onchange', updateTweetCounter);
-    }());
-    
+    Selector.addSelectionEvent();
+}
+
+(function () {
+    var tweet = document.querySelector('textarea#tweet');
+    tweet.addEventListener('focus', updateTweetCounter);
+    tweet.addEventListener('keyup', updateTweetCounter);
+    tweet.addEventListener('onchange', updateTweetCounter);
+}());
+
+(function () {
     function getMusicId() {
         if (window.location.hash)
             return window.location.hash.slice(2);
