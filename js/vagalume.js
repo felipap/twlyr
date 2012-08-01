@@ -114,17 +114,17 @@
     };
 
     return {
-        musicListFromArtistUrl: function (artistUrl, onCaptcha, onEnd) {
+        getMusicListFromArtistUrl: function (artistUrl, onCaptcha, onEnd) {
             function onData (data) {
-                if (!data || !data.toplyrics || !data.toplyrics.item) {
+                if (!data || !data.lyrics || !data.lyrics.item) {
                     onEnd([]);
                     return;
                 }
                 var musicList = [];
-                for (var i = 0; i < data.toplyrics.item.length; i++) {
+                for (var i = 0; i < data.lyrics.item.length; i++) {
                     musicList.push({
-                        id: data.toplyrics.item[i].id,
-                        name: data.toplyrics.item[i].desc,
+                        id: data.lyrics.item[i].id,
+                        name: data.lyrics.item[i].desc,
                     });
                 }
                 onEnd(musicList);
