@@ -59,14 +59,14 @@ $('#searchbar form').submit(function () {
                 success: function (html) {
                     $('#content').html(html);
                     var i = 0;
-                    function runNextDepencency(page) {
-                        if (i >= page.dependencies.length)
+                    function runNextDependency(pageInfo) {
+                        if (i >= pageInfo.dependencies.length)
                             return;
                         $.ajax({
-                            url: page.dependencies[i],
+                            url: pageInfo.dependencies[i],
                             success: function () {
                                 i++;
-                                runNextDependency(page);
+                                runNextDependency(pageInfo);
                             },
                         });
                     }
