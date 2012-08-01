@@ -64,6 +64,7 @@ $('#searchbar form').submit(function () {
                             return;
                         $.ajax({
                             url: pageInfo.dependencies[i],
+                            dataType: 'script',
                             success: function () {
                                 i++;
                                 runNextDependency(pageInfo);
