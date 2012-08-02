@@ -152,7 +152,7 @@
         , hoverWord = null // the actual word being hovered, default to null 
         , lastSelected = null // the last word selected before 
 
-    var VERBOSE = false
+    var VERBOSE = false;
     
     /*
     document.onmousedown = function (e) {
