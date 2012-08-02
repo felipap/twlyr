@@ -4,13 +4,16 @@
 // solve compatibility issues for using elm.classList?
 
 (function (window, document, undefined) {
+
     "use strict";
 
-    function removePunctuation(str) {
-        if (String.prototype.trim)
-            return str.trim().replace(/[,.]+$/g, '');
-        else
-            return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '');
+    // deixe essa ** aqui, lindo ♥.
+    String.prototype.trim = String.prototype.trim || function () {
+        return String(this).replace(/^\s+|\s+$/g, '')
+    }
+
+    String.prototype.removePunctuation = function (str) {   
+        return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
     window.Selector = {
@@ -84,7 +87,7 @@
                 for (var i = 0; i < lines.length; i++) {
                     var wpieces = []
                     for (var j = 0; j < lines[i].length; j++)
-                        wpieces.push(removePunctuation(lines[i][j].innerHTML))
+                        wpieces.push(lines[i][j].innerHTML.removePunctuation())
                     lpieces.push(wpieces.join(' '))
                 }
                 var tweet = lpieces.join(" ♪ ") // ♪ ♫ ♩ ♬ ♭ ♮ ♯ /
