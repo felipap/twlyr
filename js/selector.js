@@ -18,12 +18,6 @@
 
     function Selector () {
 
-        // everybody ♥ closures!
-        var mouseDown = false // mouse starts unclicked
-            , endWord = null // the first word of a selection process, default to null
-            , hoverWord = null // the actual word being hovered, default to null 
-            , lastSelected = null // the last word selected before 
-
         this.unselectWords = function () {
             var selected = document.querySelectorAll('.word.selected')
             for (var i = 0; i < selected.length; i++)
@@ -135,15 +129,24 @@
             }
         }
 
-        document.onmousedown = onMouseDown = function (e) {
+        // everybody ♥ closures!
+        var mouseDown = false // mouse starts unclicked
+            , endWord = null // the first word of a selection process, default to null
+            , hoverWord = null // the actual word being hovered, default to null 
+            , lastSelected = null // the last word selected before 
+
+        function onMouseDown (e) {
             console.log('mousedown')
             console.log(mouseDown, endWord, hoverWord, lastSelected)
         }
 
-        document.onmouseup = onMouseUp = function (e) {
+        function onMouseUp (e) {
             console.log('mouseup')
             console.log(mouseDown, endWord, hoverWord, lastSelected)
         }
+
+        document.onmousedown = onMouseDown
+        document.onmouseup = onMouseUp
     }
 
     window.Selector = new Selector();
@@ -158,7 +161,7 @@
         mouseDown = true
         if (VERBOSE)
             console.log("mousedown")
-        
+
         if (hoverWord) {
             // cursor is ALREADY above a word:
             // fire mouseover event to start selection of the current word.
@@ -194,8 +197,5 @@
         endWord = null
     }
     */
-    
-    document.onmouseup = Selector.onMouseUp;
-    document.onmousedown = Selector.onMouseDown;
 
 })(window, window.document);
