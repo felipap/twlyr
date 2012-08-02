@@ -9,81 +9,135 @@
 	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans' rel='stylesheet' type='text/css'>
 
 	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
 	<script src="js/vagalume.js" charset="utf-8"></script>
-	<script src="js/lyrics.js" charset="utf-8"></script>
-	<script src="js/selector.js" charset="utf-8"></script>
+	<script src="js/boxes.js" charset="utf-8"></script>
+	<script src="js/mustache.js"></script>
 
 	<style>
 
-	.box.left {
+	.wrap-left {
 		width: 380px;
 		float: left;
-		padding: 10px 0;
+		padding-right: 20px;
 	}
 
-	.box.right {
+	.wrap-right {
 		float: right;
 		width: 400px;
 	}
+	
+	.boing {
+		margin: 200px 0;
+	}
 
-	</style>
+	/* overwrite bootstrap's .container */
+	.container.black {
+		width: auto;
+		left: 0; right: 0;
+		margin-top: 20px;
+		background: #777;
+		background: url(images/blackbg.png);
+		box-shadow: inset 0 10px 40px -10px black;
+	}
+	.container.black {
+		border-top: 3px dotted white;
+	}
 
-	<style>
-	.container { margin-top: 50px; }
+	.box-wrapper:not(:empty) {
+		margin: 0 auto;
+		padding: 40px 0;
+		width: 800px;
+	}
+
+	.music-info-wrapper > * {
+		display: inline-block;
+		color: #222;
+		font: 14px/20px "Open Sans";
+	}
+
+	.music-info-wrapper img {
+		margin-right: 20px;
+		vertical-align: top;
+		box-shadow: 0 0 4px black;
+	}
+
+	.box-wrapper h2 {
+		margin-bottom: 30px;
+	}
+
 	</style>
 
 </head>
 <body>
 
+<div class="beta-strip">Beta v1.0</div>
 
 <div class="container">
-
-	<div class="inline-search-bar">
-		<div class="twlyr medium">Twlyr</div>
+	<div class="boing">
+		<h1 class="twlyr">Twlyr</h1>
+		<h3 class="desc">share a verse on Twitter!</h3>
+		
 		<div id="searchbar">
 			<form class="form-search">
-				<input type="text" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
-				<input type="text" placeholder="choose a song" class="input-medium search-query" id="search-music">
+				<input type="text" autocomplete="off" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
+				<input type="text" autocomplete="off" placeholder="choose a song" class="input-medium search-query" id="search-music">
 				<button type="submit" class="btn btn-warning btn-large">Search</button>
 			</form>
 		</div>
-	</div>
-	
-	<div id="content">
+	<footer>
+		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabriel_vianna">@gabrielvianna</a>
+	</footer>
 	</div>
 
+</div>
+
+<div class="container black">
+	<div class="box-wrapper"></div>
 </div>
 
 <!--
 <script src="js/index.js"></script>
 -->
 
-
-
 <script id="lyrics-box-html" type="text/html">
-	<div id="lyrics-box">
-		<div class="box left">
-			<h4 id="artist-name"></h4>
-			<h4 id="music-name"></h4>
-			
-			<br>
+
+	<h2>Hey, we found something!</h2>
+
+	<div class="box lyrics-box">
+		<div class="wrap-left">
+			<div class="music-info-wrapper" style="margin-bottom: 20px">
+				<img src="{{pic-url}}"></img>
+				<div>
+					artist: <h3 class="artist-name">{{artist-name}}</h3>
+					song: <h3 class="song-name">{{song-name}}</h3>
+				</div>
+			</div>
+
 
 			<div class="tweet-box">
-				<textarea id="tweet"></textarea>
+				<textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
 
 				<div class="align-line">
 					<div class="twtcounter">0</div>
-					<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
+					<button class="btn btn-success tweet-button" onClick="openTweetPopup()">Tweet</button>
 				</div>
 			</div>
 		</div>
-		<div class="box right">
+		<div class="wrap-right">
+			<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
 			<div class="lyrics"></div>
 		</div>
 	</div>
+
 </script>
 
 <script>
+
+SearchBar = new SearchBar();
+
+//////////////////
 
 // format: #!<artist>:<song>
 // undefined songs: #!<artist>:?
@@ -97,15 +151,8 @@ String.prototype.capitalize = function () {
     });
 };
 
-$$ = function () {
-    return document.querySelectorAll.apply(document, arguments);
-}
 
 ////////////////////////////
-
-function search () {
-
-}
 
 document.querySelector("form.form-search").onsubmit = function () {
 	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
@@ -116,6 +163,11 @@ document.querySelector("form.form-search").onsubmit = function () {
 		history.pushState({module:"leave"}, document.title, this.href);
 	*/
 	decideOnHash({artist:artist, music:music});
+    (function scrollToContent() { // reciclar
+		var p = document.querySelector(".box-wrapper").offsetTop;
+		$('html').animate({scrollTop:p}, 1000); // IE, FF
+		$('body').animate({scrollTop:p}, 1000); // chrome, don't know if safary works
+	})()
 	return false
 }
 

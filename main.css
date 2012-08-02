@@ -1,4 +1,8 @@
 
+.box {
+	display: table;
+}
+
 .beta-strip {
 	position: fixed;
 	top: 30px;
@@ -102,7 +106,7 @@
 
 body {
 	background: white; whiteSmoke;
-	backgroundd: url(images/bg.png);
+	backgsround: url(images/bg.png);
 }
 
 .container {
@@ -110,11 +114,12 @@ body {
 }
 
 * {
-	osutline: 1px solid black;
+	oustline: 1px solid black;
 }
 
 /************************************/
-
+/*************
+*/
 h1.twlyr {
 	margin-bottom: 10px;
 	z-index: 1000;
@@ -164,16 +169,16 @@ footer a, footer a:active, footer a:hover, footer a:visited {
 
 .lyrics {
 	float: right;
-	-webkit-user-select: none;
-	outline: 1px solid #ddd;
-
+	soutline: 1px solid #ddd;
 	min-height: 200px;
 	width: 100%;
+	-webkit-user-select: none;
 }
 
 .verse {
+	color: white;
 	font: 15px "Open Sans", Arial;
-
+	text-shadow: 0 0 4px black;
 	display: table;
 	padding: 10px;
 }
@@ -197,7 +202,7 @@ footer a, footer a:active, footer a:hover, footer a:visited {
 /******** TWEET BOX
 */
 
-textarea#tweet {
+textarea.tweet {
 	width: 350px;
 	font-size: 15px;
 	height: 70px;
@@ -218,6 +223,7 @@ textarea#tweet {
 .tweet-box {
 	background: whiteSmoke;
 	box-shadow: 0 0 0 1px #ddd;
+	box-shadow: 0 0 10px #333;
 	border-radius: 5px;
 	padding: 10px;
 }
@@ -225,19 +231,25 @@ textarea#tweet {
 .tweet-box.blue { background: #08C; }
 .tweet-box.blue .twtcounter { color: white; }
 
-#tweet-button {
+.tweet-button {
 	float: right;
 	font-weight: bold;
 }
 
 /************************************/
-/******** INLINE-SEARCH-BAR
+/******** .BLACK-CONTENT-WRAPPER
 */
 
-.inline-search-bar > * {
-	float: left;
+.container.black h1,
+.container.black h2,
+.container.black h3 {
+	color: white;
+	text-shadow: 0 0 3px #333;
 }
 
-.inline-search-bar .twlyr {
-	margin: 0 30px;
+.container.black h4,
+.container.black h5,
+.container.black h6 {
+	color: white;
+	text-shadow: none;
 }

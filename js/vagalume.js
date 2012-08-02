@@ -274,7 +274,8 @@
                     obj.music = {
                         id: data.mus[0].id,
                         name: data.mus[0].name,
-                        lyrics: data.mus[0].text
+                        lyrics: data.mus[0].text,
+                        vagamule_url: data.mus[0].url 
                     };
                 }
                 callback(obj)
@@ -286,7 +287,7 @@
             console.log( 'http://www.vagalume.com.br/api/search.php?' +
                     'art=' + encodeURIComponent(artist) +
                     '&mus=' + encodeURIComponent(music) +
-                    'extra=artpic')
+                    '&extra=artpic')
 
             $.getJSON(
                 'http://www.vagalume.com.br/api/search.php?' +
