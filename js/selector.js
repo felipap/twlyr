@@ -129,6 +129,16 @@
             }
         },
 
+        onMouseDown: function (e) {
+            console.log('mousedown')
+            console.log(mouseDown, endWod, hoverWord, lastSelected)
+        },
+
+        onMouseUp: function (e) {
+            console.log('mouseup')
+            console.log(mouseDown, endWod, hoverWord, lastSelected)
+        }
+
         // these become available through the Selector
         get endWord() { return endWord },
         get mouseDown() { return mouseDown },
@@ -144,6 +154,7 @@
 
     var VERBOSE = false
     
+    /*
     document.onmousedown = function (e) {
         if (e.button !== 0)
             return; // left-click only!
@@ -186,5 +197,9 @@
         }
         endWord = null
     }
+    */
+    
+    document.onmouseup = Selector.onMouseUp;
+    document.onmousedown = Selector.onMouseDown;
 
 })(window, window.document);

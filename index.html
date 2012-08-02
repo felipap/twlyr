@@ -6,7 +6,7 @@
 
 	<link href="bootstrap/css/bootstrap.css" rel="stylesheet"></link>
 	<link href='main.css' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans' rel='stylesheet' type='text/css'>
 
 	<script src="js/jquery.min.js" charset="utf-8"></script>
 	<script src="js/vagalume.js" charset="utf-8"></script>
@@ -53,6 +53,7 @@
 </div>
 
 <script>
+
 ﻿$('#search-artist').val('Coldplay');
 $('#search-music').val('The Scientist');
 
@@ -65,6 +66,7 @@ $('#searchbar form').submit(function () {
 });
 
 (function () {
+
     $.ajaxSetup({
         async: true,
         cache: true,
@@ -112,12 +114,14 @@ $('#searchbar form').submit(function () {
         }
     };
     
-    var currentHash = false;
+    var currentHash = null;
     setInterval(function () {
         if (window.location.hash !== currentHash) {
+        	console.log('diff')
             var pageInfo = parseHash(window.location.hash);
             currentHash = window.location.hash;
             $('#content').html('');
+
             $.ajax({
                 url: pageInfo.html,
                 success: function (html) {
@@ -138,6 +142,7 @@ $('#searchbar form').submit(function () {
                     runNextDependency(pageInfo);
                 },
             });
+
         }
     }, 100);
 }());

@@ -4,7 +4,7 @@
 
 	'use strict';
 
-	// put these in vagalume.js?
+	// put these into vagalume.js?
 
 	function _getTopArtists (callback, onerror) {
 		var monthlyRankURL = "http://www.vagalume.com.br/api/rank.php?\
@@ -21,11 +21,6 @@
 
 		$.getJSON(monthlyRankURL, onData, onerror);
 	}
-
-	//
-
-
-
 
 	// do stuff;
 	window.SearchBar = function () {
