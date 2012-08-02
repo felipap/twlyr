@@ -16,7 +16,9 @@
         return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
-    function Selector () {
+    window.Selector = function () {
+
+        var _this = this;
 
         this.unselectWords = function () {
             var selected = document.querySelectorAll('.word.selected')
@@ -27,7 +29,7 @@
         this.selectRange = function (a, b) {
             // Make selection starting at A and ending at B.
 
-            var w = Selector.getRange(a, b)
+            var w = _this.getRange(a, b)
             for (var i = 0; i< w.length; i++)
                 w[i].classList.add('selected')
             if (w.length == 0)
@@ -37,7 +39,7 @@
         this.getSplitRange = function (a, b) {
             // Get list of words in the range, divided according to the lines they're in.
 
-            var words = Selector.getRange(a, b)
+            var words = _this.getRange(a, b)
                 , selection = []
             
             var i = 0, w = null
@@ -82,7 +84,7 @@
             if (!hoverWord || !endWord) // unselection process: clear tweet and return
                 var tweet = ''
             else {
-                var lines = Selector.getSplitRange.apply(null, Selector.getSelectionEnds())
+                var lines = _this.getSplitRange.apply(null, _this.getSelectionEnds())
                     , lpieces = []
                 for (var i = 0; i < lines.length; i++) {
                     var wpieces = []
@@ -112,9 +114,9 @@
                     endWord = e.target
                 }
 
-                Selector.updateTweetBox()
-                Selector.unselectWords()
-                Selector.selectRange.apply(null, Selector.getSelectionEnds())
+                _this.updateTweetBox()
+                _this.unselectWords()
+                _this.selectRange.apply(null, _this.getSelectionEnds())
             }
             
             function mouseoutWord(e) {
@@ -134,15 +136,49 @@
             , endWord = null // the first word of a selection process, default to null
             , hoverWord = null // the actual word being hovered, default to null 
             , lastSelected = null // the last word selected before 
+        var VERBOSE = false;
 
         function onMouseDown (e) {
-            console.log('mousedown')
-            console.log(mouseDown, endWord, hoverWord, lastSelected)
+            if (e.button !== 0)
+                return; // left-click only!
+
+            mouseDown = true
+            if (VERBOSE)
+                console.log("mousedown")
+
+            if (hoverWord) {
+                // cursor is ALREADY above a word:
+                // fire mouseover event to start selection of the current word.
+                _this.unselectWords()
+                var e = document.createEvent("MouseEvents")
+                e.initMouseEvent("mouseover")
+                hoverWord.dispatchEvent(e)
+            }
         }
 
         function onMouseUp (e) {
-            console.log('mouseup')
-            console.log(mouseDown, endWord, hoverWord, lastSelected)
+            if (e.button !== 0)
+                return // left-click only!
+
+            mouseDown = false
+            if (VERBOSE)
+                console.log("mouseup")
+            
+            if (hoverWord && endWord) {
+                var selected = _this.getRange.apply(null, _this.getSelectionEnds())
+                if (selected.length === 1) {
+                    // If only one word is currently selected,
+                    // check to see if it's an unselection process.
+                    if (selected[0] === lastSelected) { // Same word was selected last time: unselect it!
+                        _this.unselectWords()
+                        endWord = lastSelected = null // Allow for selection next time.
+                        _this.updateTweetBox()
+                        return
+                    } else
+                        lastSelected = selected[0]
+                }
+            }
+            endWord = null
         }
 
         document.onmousedown = onMouseDown
@@ -150,52 +186,5 @@
     }
 
     window.Selector = new Selector();
-
-    var VERBOSE = false;
-    
-    /*
-    document.onmousedown = function (e) {
-        if (e.button !== 0)
-            return; // left-click only!
-
-        mouseDown = true
-        if (VERBOSE)
-            console.log("mousedown")
-
-        if (hoverWord) {
-            // cursor is ALREADY above a word:
-            // fire mouseover event to start selection of the current word.
-            Selector.unselectWords()
-            var e = document.createEvent("MouseEvents")
-            e.initMouseEvent("mouseover")
-            hoverWord.dispatchEvent(e)
-        }
-    }
-
-    document.onmouseup = function (e) {        
-        if (e.button !== 0)
-            return // left-click only!
-
-        mouseDown = false
-        if (VERBOSE)
-            console.log("mouseup")
-        
-        if (hoverWord && endWord) {
-            var selected = Selector.getRange.apply(null, Selector.getSelectionEnds())
-            if (selected.length === 1) {
-                // If only one word is currently selected,
-                // check to see if it's an unselection process.
-                if (selected[0] === lastSelected) { // Same word was selected last time: unselect it!
-                    Selector.unselectWords()
-                    endWord = lastSelected = null // Allow for selection next time.
-                    Selector.updateTweetBox()
-                    return
-                } else
-                    lastSelected = selected[0]
-            }
-        }
-        endWord = null
-    }
-    */
 
 })(window, window.document);
