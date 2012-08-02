@@ -8,12 +8,12 @@
     "use strict";
 
     // deixe essa ** aqui, lindo ♥.
-    String.prototype.trim = String.prototype.trim || function (str) {
-        return str.replace(/^\s+|\s+$/g, '')
+    String.prototype.trim = String.prototype.trim || function () {
+        return String(this).replace(/^\s+|\s+$/g, '')
     }
 
-    String.prototype.removePunctuation = function (str) {   
-        return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
+    String.prototype.removePunctuation = function () {
+        return String(this).replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
     window.Selector = function () {
