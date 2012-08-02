@@ -131,12 +131,12 @@
 
         onMouseDown: function (e) {
             console.log('mousedown')
-            console.log(mouseDown, endWod, hoverWord, lastSelected)
+            console.log(mouseDown, endWord, hoverWord, lastSelected)
         },
 
         onMouseUp: function (e) {
             console.log('mouseup')
-            console.log(mouseDown, endWod, hoverWord, lastSelected)
+            console.log(mouseDown, endWord, hoverWord, lastSelected)
         },
 
         // these become available through the Selector
