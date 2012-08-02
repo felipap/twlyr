@@ -16,7 +16,7 @@
         return String(this).replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
-    window.Selector = function () {
+    window.Selector = new (function () {
 
         var _this = this;
 
@@ -183,8 +183,6 @@
 
         document.onmousedown = onMouseDown
         document.onmouseup = onMouseUp
-    }
-
-    window.Selector = new Selector();
+    })();
 
 })(window, window.document);
