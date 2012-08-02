@@ -8,10 +8,10 @@
 	<link href='main.css' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans' rel='stylesheet' type='text/css'>
 
-	<script src="js/jquery.min.js" charset="utf-8"></script>
-	<script src="js/selector.js" charset="utf-8"></script>
+	<script src="js/jquery.min.js"></script>
 	<script src="js/vagalume.js" charset="utf-8"></script>
-	<script src="js/search.js" charset="utf-8"></script>
+	<script src="js/lyrics.js" charset="utf-8"></script>
+	<script src="js/selector.js" charset="utf-8"></script>
 
 	<style>
 
@@ -35,6 +35,7 @@
 </head>
 <body>
 
+
 <div class="container">
 
 	<div class="inline-search-bar">
@@ -53,100 +54,103 @@
 
 </div>
 
+<!--
+<script src="js/index.js"></script>
+-->
+
+
+
+<script id="lyrics-box-html" type="text/html">
+	<div id="lyrics-box">
+		<div class="box left">
+			<h4 id="artist-name"></h4>
+			<h4 id="music-name"></h4>
+			
+			<br>
+
+			<div class="tweet-box">
+				<textarea id="tweet"></textarea>
+
+				<div class="align-line">
+					<div class="twtcounter">0</div>
+					<button class="btn btn-success" id="tweet-button" onClick="openTweetPopup()">Tweet</button>
+				</div>
+			</div>
+		</div>
+		<div class="box right">
+			<div class="lyrics"></div>
+		</div>
+	</div>
+</script>
+
 <script>
 
-﻿$('#search-artist').val('Coldplay');
-$('#search-music').val('The Scientist');
+// format: #!<artist>:<song>
+// undefined songs: #!<artist>:?
+// undefined artists: #!:<song>
+// searches have no urls
+// errors: #!error
 
-$('#searchbar form').submit(function () {
-    search(
-        $('#search-artist').val(),
-        $('#search-music').val()
-    );
-    return false;
-});
+String.prototype.capitalize = function () {
+    return String(this).replace( /(^|\s)([a-z])/g , function (m, p1, p2) {
+        return p1 + p2.toUpperCase();
+    });
+};
+
+$$ = function () {
+    return document.querySelectorAll.apply(document, arguments);
+}
+
+////////////////////////////
+
+function search () {
+
+}
+
+document.querySelector("form.form-search").onsubmit = function () {
+	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
+		music = document.querySelector("#search-music").value.toLowerCase().trim();
+	location.hash = "#!"+escape(artist)+":"+escape(music);
+	/* do this
+	if (history && history.pushState)
+		history.pushState({module:"leave"}, document.title, this.href);
+	*/
+	decideOnHash({artist:artist, music:music});
+	return false
+}
+
+function updateForm (hashObj) {
+	document.querySelector("#search-artist").value = hashObj.artist;
+	document.querySelector("#search-music").value = hashObj.music;
+}
+
+function parseHash (hashUrl) {
+	// Return {String artist, String music} based on location.hash.
+	var hash = hashUrl || location.hash.replace(/^#\!?/, ''); // remove #! from beginning
+	if (hash === 'error')
+		// Remember to take down website they come up with an artist named 'error'.
+		return {artist: null, music: null, error: true}
+	var artist = unescape(hash.split(':')[0] || '').capitalize(),
+		music = unescape(hash.split(':')[1] || '').capitalize();
+	return {artist: artist, music: music}
+}
+
+function decideOnHash (hashObj) {
+	// Decide what to do, based hashObj {String artist, String music}
+	if (hashObj.error) {
+		console.log('error')
+	} else if (hashObj.artist && hashObj.music) {
+		lb = new LyricsBox(hashObj.artist, hashObj.music);
+	}
+}
 
 (function () {
+	var h = parseHash();
+	updateForm(h)
+	decideOnHash(parseHash())
+})();
 
-    $.ajaxSetup({
-        async: true,
-        cache: true,
-        error: function (jqXHR, textStatus, errorThrown){
-            console.log('AJAX ERROR', jqXHR, textStatus, errorThrown);
-        },
-        type: 'GET',
-        dataType: 'html',
-        timeout: 10000,
-    });
-
-    var parseHash = function (hash) {
-        var page = 'default';
-        if (hash && hash.length >= 3 && hash.slice(0, 2) === '#!')
-            page = hash.slice(2).split(':')[0].toLowerCase();
-        switch (page)
-        {
-            case 'default':
-                return {
-                    html: 'default.html',
-                    dependencies: [],
-                }
-            case 'artist':
-                return {
-                    html: 'artist.html',
-                    dependencies: [
-                        'js/artist.js'
-                    ],
-                };
-            case 'error':
-                return {
-                    html: 'error.html',
-                    dependencies: [
-                        'js/error.js'
-                    ],
-                }
-            default:
-                return {
-                    html: 'lyrics.html',
-                    dependencies: [
-                        'js/selector.js',
-                        'js/lyrics.js'
-                    ],
-                };
-        }
-    };
-    
-    var currentHash = null;
-    setInterval(function () {
-        if (window.location.hash !== currentHash) {
-        	console.log('diff')
-            var pageInfo = parseHash(window.location.hash);
-            currentHash = window.location.hash;
-            $('#content').html('');
-
-            $.ajax({
-                url: pageInfo.html,
-                success: function (html) {
-                    $('#content').html(html);
-                    var i = 0;
-                    function runNextDependency(pageInfo) {
-                        if (i >= pageInfo.dependencies.length)
-                            return;
-                        $.ajax({
-                            url: pageInfo.dependencies[i],
-                            dataType: 'script',
-                            success: function () {
-                                i++;
-                                runNextDependency(pageInfo);
-                            },
-                        });
-                    }
-                    runNextDependency(pageInfo);
-                },
-            });
-
-        }
-    }, 100);
-}());
 </script>
+
 </body>
 </html>

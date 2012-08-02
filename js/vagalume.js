@@ -187,7 +187,7 @@
                 onData
             );
                     
-            return vagalume;        
+            return vagalume;
         },
         getMusicInfoFromId: function (musicId, onCaptcha, onEnd) {
             function onData(data) {
@@ -252,6 +252,52 @@
         
         // reciclar tudo daqui para baixo
         // com pontos e vírgulas
+        getMusic: function (artist, music, callback) {
+            function onData (data) {
+                if (!data || !data.type || data.type === 'notfound' || !data.art) {
+                    callback({});
+                    return;
+                }
+                
+                var obj = {
+                    artist: data.art
+                };
+                
+                // Sometimes the vagalume api will return exact cases together with
+                // variation of the songs and data.type will be set to 'approx'.
+                // This is bad! Re-write this to check which song in the list
+                // has the same "raw name" as the requested and notify the user somehow.
+                // Better allow the user to choose between approx songs.
+                if (!data.mus) { // || data.mus.length !== 1) { // data.type !== 'exact'
+                    obj.music = null; // data.mus[0];
+                } else {
+                    obj.music = {
+                        id: data.mus[0].id,
+                        name: data.mus[0].name,
+                        lyrics: data.mus[0].text
+                    };
+                }
+                callback(obj)
+            }
+
+            if (!artist || typeof callback !== 'function')
+                return null;
+            
+            console.log( 'http://www.vagalume.com.br/api/search.php?' +
+                    'art=' + encodeURIComponent(artist) +
+                    '&mus=' + encodeURIComponent(music) +
+                    'extra=artpic')
+
+            $.getJSON(
+                'http://www.vagalume.com.br/api/search.php?' +
+                    'art=' + encodeURIComponent(artist) +
+                    '&mus=' + encodeURIComponent(music) +
+                    '&extra=artpic',
+                onData
+            );
+                    
+            return null;       
+        },
         artistExists: function (artist, callback, onerror) {
             var artist = artist.toLowerCase().trim();
             var url = "http://www.vagalume.com.br/api/search.php?art="+encodeURIComponent(artist);
@@ -289,11 +335,11 @@
                     .error(onerror);
             return vagalume;
         },
-        // método interno (?)
+        // método interno => tirar do return e colocar lá em cima
         getRawSongName: function (name) {
             return String(name).replace(/\s?\(.*$/, '')
         },
-        // método interno (?)
+        // método interno => tirar do return e colocar lá em cima
         getArtistURL: function (name, callback, onerror) {
             function onData (data) {
                 if (data.type === 'notfound') {

@@ -136,7 +136,7 @@
             , endWord = null // the first word of a selection process, default to null
             , hoverWord = null // the actual word being hovered, default to null 
             , lastSelected = null // the last word selected before 
-        var VERBOSE = false;
+        var VERBOSE = false
 
         function onMouseDown (e) {
             if (e.button !== 0)
@@ -181,8 +181,8 @@
             endWord = null
         }
 
-        document.onmousedown = onMouseDown
-        document.onmouseup = onMouseUp
+        document.addEventListener("mousedown", onMouseDown)
+        document.addEventListener("mouseup", onMouseUp)
     })();
 
 })(window, window.document);
