@@ -137,7 +137,7 @@
         onMouseUp: function (e) {
             console.log('mouseup')
             console.log(mouseDown, endWod, hoverWord, lastSelected)
-        }
+        },
 
         // these become available through the Selector
         get endWord() { return endWord },
@@ -152,7 +152,7 @@
         , hoverWord = null // the actual word being hovered, default to null 
         , lastSelected = null // the last word selected before 
 
-    var VERBOSE = false
+    var VERBOSE = false;
     
     /*
     document.onmousedown = function (e) {
