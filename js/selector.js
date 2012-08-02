@@ -16,15 +16,21 @@
         return str.replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
-    window.Selector = {
+    function Selector () {
 
-        unselectWords: function () {
+        // everybody ♥ closures!
+        var mouseDown = false // mouse starts unclicked
+            , endWord = null // the first word of a selection process, default to null
+            , hoverWord = null // the actual word being hovered, default to null 
+            , lastSelected = null // the last word selected before 
+
+        this.unselectWords = function () {
             var selected = document.querySelectorAll('.word.selected')
             for (var i = 0; i < selected.length; i++)
                 selected[i].classList.remove('selected')
-        },
+        }
 
-        selectRange: function (a, b) {
+        this.selectRange = function (a, b) {
             // Make selection starting at A and ending at B.
 
             var w = Selector.getRange(a, b)
@@ -32,9 +38,9 @@
                 w[i].classList.add('selected')
             if (w.length == 0)
                 throw Error('no range selected!')
-        },
+        }
 
-        getSplitRange: function (a, b) {
+        this.getSplitRange = function (a, b) {
             // Get list of words in the range, divided according to the lines they're in.
 
             var words = Selector.getRange(a, b)
@@ -49,9 +55,9 @@
             }
 
             return selection
-        },
+        }
 
-        getRange: function (a, b) {
+        this.getRange = function (a, b) {
             // Return the list of words between (an including) A and B.
 
             if (!a || !b)
@@ -69,16 +75,16 @@
                 return [a]
 
             return words.slice(first, last+1)
-        },
+        }
 
-        getSelectionEnds: function () {
+        this.getSelectionEnds = function () {
             // Return the words on the extreme of the current selection process.
             if (!hoverWord || !endWord)
                 throw Error('why isn\'t hoverWord/endWord set?')
             return [hoverWord, endWord]
-        },
+        }
 
-        updateTweetBox: function () {
+        this.updateTweetBox = function () {
             if (!hoverWord || !endWord) // unselection process: clear tweet and return
                 var tweet = ''
             else {
@@ -94,9 +100,9 @@
             }
             document.querySelector('textarea#tweet').value = tweet
             updateTweetCounter()
-        },
+        }
 
-        addSelectionEvent: function (words) {
+        this.addSelectionEvent = function (words) {
             // Add mouseover/mouseout listener to elements in 'words'.
             // When words is null, use document.querySelectorAll('.word')?
 
@@ -127,30 +133,20 @@
                 words[i].addEventListener('mouseover', mouseoverWord)
                 words[i].addEventListener('mouseout', mouseoutWord)
             }
-        },
+        }
 
-        onMouseDown: function (e) {
+        document.onmousedown = onMouseDown = function (e) {
             console.log('mousedown')
             console.log(mouseDown, endWord, hoverWord, lastSelected)
-        },
+        }
 
-        onMouseUp: function (e) {
+        document.onmouseup = onMouseUp = function (e) {
             console.log('mouseup')
             console.log(mouseDown, endWord, hoverWord, lastSelected)
-        },
+        }
+    }
 
-        // these become available through the Selector
-        get endWord() { return endWord },
-        get mouseDown() { return mouseDown },
-        get hoverWord() { return hoverWord },
-        get lastSelected() { return lastSelected }
-    };
-
-    // everybody ♥ closures!
-    var mouseDown = false // mouse starts unclicked
-        , endWord = null // the first word of a selection process, default to null
-        , hoverWord = null // the actual word being hovered, default to null 
-        , lastSelected = null // the last word selected before 
+    window.Selector = new Selector();
 
     var VERBOSE = false;
     
