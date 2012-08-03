@@ -32,22 +32,26 @@
 		margin: 200px 0;
 	}
 
+	.separator {
+		border-top: 3px dotted white;
+	}
+
 	/* overwrite bootstrap's .container */
 	.container.black {
 		width: auto;
-		left: 0; right: 0;
 		margin-top: 20px;
 		background: #777;
 		background: url(images/blackbg.png);
 		box-shadow: inset 0 10px 40px -10px black;
 	}
-	.container.black {
+	.container.black:not(:empty) {
 		border-top: 3px dotted white;
+		borsder-bottom: 3px dotted white;
 	}
 
-	.box-wrapper:not(:empty) {
+	.box-wrapper {
 		margin: 0 auto;
-		padding: 40px 0;
+		margin-bottom: 30px;
 		width: 800px;
 	}
 
@@ -63,8 +67,15 @@
 		box-shadow: 0 0 4px black;
 	}
 
-	.box-wrapper h2 {
-		margin-bottom: 30px;
+	
+	.box-wrapper .lyrics-box h2 {
+		margin-bottom: 40px;
+	}
+
+	.box-wrapper .error-box { margin: 30px; }
+	.box-wrapper .error-box h2 { margin-bottom: 10px; }
+	.lyrics-box {
+		margin: 40px 0;
 	}
 
 	</style>
@@ -93,44 +104,95 @@
 
 </div>
 
-<div class="container black">
-	<div class="box-wrapper"></div>
-</div>
-
-<!--
-<script src="js/index.js"></script>
--->
+<div class="container black"></div>
 
 <script id="lyrics-box-html" type="text/html">
+	<div class="box-wrapper">
 
-	<h2>Hey, we found something!</h2>
+		<div class="box lyrics-box">
+		<h2>Hey, we found something!</h2>
+			<div class="wrap-left">
+				<div class="music-info-wrapper" style="margin-bottom: 20px">
+					<img src="{{pic-url}}"></img>
+					<div>
+						artist: <h3 class="artist-name">{{artist-name}}</h3>
+						song: <h3 class="song-name">{{song-name}}</h3>
+					</div>
+				</div>
 
-	<div class="box lyrics-box">
-		<div class="wrap-left">
-			<div class="music-info-wrapper" style="margin-bottom: 20px">
-				<img src="{{pic-url}}"></img>
-				<div>
-					artist: <h3 class="artist-name">{{artist-name}}</h3>
-					song: <h3 class="song-name">{{song-name}}</h3>
+
+				<div class="tweet-box">
+					<textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
+
+					<div class="align-line">
+						<div class="twtcounter">0</div>
+						<button class="btn btn-success tweet-button" onClick="openTweetPopup()">Tweet</button>
+					</div>
 				</div>
 			</div>
-
-
-			<div class="tweet-box">
-				<textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
-
-				<div class="align-line">
-					<div class="twtcounter">0</div>
-					<button class="btn btn-success tweet-button" onClick="openTweetPopup()">Tweet</button>
-				</div>
+			<div class="wrap-right">
+				<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
+				<div class="lyrics"></div>
 			</div>
 		</div>
-		<div class="wrap-right">
-			<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
-			<div class="lyrics"></div>
+
+		<div class="separsator"></div>
+	</div>
+</script>
+
+<script id="error-box-html" type="text/html">
+	<div class="box-wrapper">
+		<div class="box error-box">
+			{{#unknown-error}}
+				<h2>Unknown Error</h2>
+				<h3>Something hapenned, but...</h3>
+			{{/unknown-error}}
+
+			{{#artist-404}}
+				<h2>Artist '{{artist-name}}' was not found</h2> <!-- ' -->
+				<h3>We're sorry. You sure you're spelling it correctly?</h3> <!-- ' -->
+			{{/artist-404}}
+
+			{{#music-404}}
+				<h2>Song not found</h2>
+				<h3>We couldn't find {{music-name}} by {{artist-name}}. </h3><!-- ' -->
+			{{/music-404}}
+
+			{{#general-error}}
+				<h2>{{general-error}}</h2>
+			{{/general-error}}
 		</div>
 	</div>
+</script>
 
+<script id="BOINGartist-box-html" type="text/html">
+		
+	(function () {
+	    function getArtistUrl() {
+	        if (!window.location.hash)
+	            return '';
+	        return 'http://www.vagalume.com.br/' + window.location.hash.slice(2).split(':')[1] + '/';
+	    }
+	    
+	    vagalume.getMusicListFromArtistUrl(
+	        getArtistUrl(),
+	        function (data) {
+	            if (data.length === 0) {
+	                window.location.hash = '#!error:2';
+	                return;
+	            }
+	            for (var i = 0; i < data.length; i++) {
+	                $('#content ol').append(
+	                    $('<li>').append(
+	                        $('<a>').attr('href', '#!' + data[i].id).append(
+	                            data[i].name
+	                        )
+	                    )
+	                );
+	            }
+	        }
+	    );
+	}());
 </script>
 
 <script>
@@ -142,33 +204,12 @@ SearchBar = new SearchBar();
 // format: #!<artist>:<song>
 // undefined songs: #!<artist>:?
 // undefined artists: #!:<song>
-// searches have no urls
-// errors: #!error
+// errors have no urls
 
-String.prototype.capitalize = function () {
-    return String(this).replace( /(^|\s)([a-z])/g , function (m, p1, p2) {
-        return p1 + p2.toUpperCase();
-    });
-};
-
-
-////////////////////////////
-
-document.querySelector("form.form-search").onsubmit = function () {
-	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
-		music = document.querySelector("#search-music").value.toLowerCase().trim();
-	location.hash = "#!"+escape(artist)+":"+escape(music);
-	/* do this
-	if (history && history.pushState)
-		history.pushState({module:"leave"}, document.title, this.href);
-	*/
-	decideOnHash({artist:artist, music:music});
-    (function scrollToContent() { // reciclar
-		var p = document.querySelector(".box-wrapper").offsetTop;
-		$('html').animate({scrollTop:p}, 1000); // IE, FF
-		$('body').animate({scrollTop:p}, 1000); // chrome, don't know if safary works
-	})()
-	return false
+function scrollToContent () {
+	var p = document.querySelector(".container.black").offsetTop;
+	$('html').animate({scrollTop:p}, 1000); // IE, FF
+	$('body').animate({scrollTop:p}, 1000); // chrome, don't know if safary works	
 }
 
 function updateForm (hashObj) {
@@ -176,33 +217,66 @@ function updateForm (hashObj) {
 	document.querySelector("#search-music").value = hashObj.music;
 }
 
+document.querySelector("form.form-search").onsubmit = function () {
+	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
+		music = document.querySelector("#search-music").value.toLowerCase().trim();
+	substituteHash("#!"+escape(artist)+":"+escape(music));
+	return false;
+}
+
 function parseHash (hashUrl) {
 	// Return {String artist, String music} based on location.hash.
-	var hash = hashUrl || location.hash.replace(/^#\!?/, ''); // remove #! from beginning
-	if (hash === 'error')
-		// Remember to take down website they come up with an artist named 'error'.
+	var hash = (hashUrl || location.hash).replace(/^#\!?/, ''); // remove #! from beginning
+	if (hash === 'error') {
+		// Remember to take down website when they come up with an artist named 'error'.
 		return {artist: null, music: null, error: true}
+	}
 	var artist = unescape(hash.split(':')[0] || '').capitalize(),
 		music = unescape(hash.split(':')[1] || '').capitalize();
 	return {artist: artist, music: music}
 }
 
-function decideOnHash (hashObj) {
+function searchSong (artist, song) {
+	vagalume.getMusic(artist, song, function (data) {
+		if (data.music) { // refine this
+			new LyricsBox(data);
+			scrollToContent();
+		} else {
+			new ErrorBox({artist:artist, song:song}, data);
+		}
+	});
+}
+
+/////////////
+
+function substituteHash (newhash) {
+	var newhash = "#!"+newhash.replace(/^#\!?/, '');
+	location.hash = newhash;
+	decideOnHash();
+	// if (history && history.pushState)
+	// 	history.pushState({module:"leave"}, document.title, this.href);
+}
+
+function decideOnHash () {
 	// Decide what to do, based hashObj {String artist, String music}
-	if (hashObj.error) {
-		console.log('error')
+	var hashObj = parseHash();
+ 	if (hashObj.error) {
+ 		new ErrorBox('something just hapenned :S');
 	} else if (hashObj.artist && hashObj.music) {
-		lb = new LyricsBox(hashObj.artist, hashObj.music);
+		searchSong(hashObj.artist, hashObj.music);
+	} else {
+		new ErrorBox('Not all fields were specified. :(')
 	}
 }
 
 (function () {
 	var h = parseHash();
 	updateForm(h)
-	decideOnHash(parseHash())
+	decideOnHash()
 })();
 
-</script>
 
+
+</script>
 </body>
 </html>

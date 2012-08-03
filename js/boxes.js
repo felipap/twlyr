@@ -15,7 +15,13 @@
         return String(this).replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
     }
 
-	window.LyricsBox = function (artist, song) {
+    String.prototype.capitalize = function () {
+	    return String(this).replace( /(^|\s)([a-z])/g , function (m, p1, p2) {
+	        return p1 + p2.toUpperCase();
+	    });
+	};
+
+	window.LyricsBox = function (data) {
 
 		// Selector is an intern object of the LyricsBox.
 	    function Selector () {
@@ -267,25 +273,23 @@
 	        		"artist-url": artist.url,
 	        		"pic-url": artist.pic_medium // pic_small
 	        	})
-            document.querySelector(".box-wrapper").innerHTML = html;
+            document.querySelector(".container.black").innerHTML = html;
         }
 
         var _this = this;
         var selector = null;
 
-        vagalume.getMusic(artist, song, function (obj) {
-            console.log('received', obj)
+        console.log('received', data)
 
-	        renderHTML(obj.artist, obj.music)
+        renderHTML(data.artist, data.music)
 
-            selector = new Selector()
-            writeLyrics(obj.music.lyrics)
+        selector = new Selector()
+        writeLyrics(data.music.lyrics)
 
-	        var tweet = document.querySelector('textarea.tweet');
-	        tweet.addEventListener('focus', updateTweetCounter);
-	        tweet.addEventListener('keyup', updateTweetCounter);
-	        tweet.addEventListener('onchange', updateTweetCounter);
-        })
+        var tweet = document.querySelector('textarea.tweet');
+        tweet.addEventListener('focus', updateTweetCounter);
+        tweet.addEventListener('keyup', updateTweetCounter);
+        tweet.addEventListener('onchange', updateTweetCounter);
 
     }
 
@@ -378,6 +382,37 @@
 			return false;
 		}
 	}
+
+    window.ErrorBox = function (query, data) {
+    	// Where query is an object {String artist, String song} requested to the server
+    	// and data is the object returned.
+    
+    	function renderHTML (obj) {
+    		var html = Mustache.render(template, obj)
+			document.querySelector(".container.black").innerHTML = html;
+    	}
+
+        console.log('query', query, 'data', data);
+	
+        var template = document.querySelector('#error-box-html').innerHTML;
+        if (!data && typeof query === 'string') {
+        	renderHTML({'general-error': query})
+        } else if (!data.artist) {
+        	renderHTML({
+        		'artist-404': true,
+        		'artist-name': query.artist
+        	})
+        } else if (!data.music) {
+        	renderHTML({
+        		'music-404': true,
+        		'music-name': query.music,
+        		'artist-name': query.artist
+        	})
+        } else {
+        	renderHTML({'unknown-error': true});
+        }
+
+    }
 
 
 })(window, window.document);
