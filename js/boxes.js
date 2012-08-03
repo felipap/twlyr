@@ -290,7 +290,24 @@
         tweet.addEventListener('focus', updateTweetCounter);
         tweet.addEventListener('keyup', updateTweetCounter);
         tweet.addEventListener('onchange', updateTweetCounter);
+    }
 
+    window.ListBox = function (query, data, custom_msg) {
+        function renderHTML (artist, songs) {
+        	console.log(artist, songs)
+        	var template = document.querySelector('#list-box-html').innerHTML
+        		, html = Mustache.render(template, {
+	        		"artist-name": artist.name,
+	        		"artist-url": artist.url,
+	        		"pic-url": artist.pic_medium, // pic_small
+	        		"songs": songs,
+	        		"num-lyrics": songs.length,
+	        		"msg": custom_msg,
+	        	})
+            document.querySelector(".container.black").innerHTML = html;
+        }
+
+        renderHTML(data.artist, data.songs);
     }
 
     window.SearchBar = function () {
@@ -361,7 +378,7 @@
 			function onData (bool) {
 				function onData (list) {
 					console.log('list of songs for', name, list);
-					_this.changeTypeahead($("#search-music"), { source: list });
+					_this.changeTypeahead($("#search-music"), { source: list.songs });
 				}
 				if (!bool) { // artist was not found
 					console.log('artist', name, 'not found');
@@ -411,7 +428,6 @@
         } else {
         	renderHTML({'unknown-error': true});
         }
-
     }
 
 

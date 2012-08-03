@@ -120,16 +120,22 @@ body {
 /************************************/
 /*************
 */
-h1.twlyr {
+.twlyr {
+	display: block;
 	margin-bottom: 10px;
 	z-index: 1000;
 }
 
 .twlyr {
-	color: #09C;
+	cursor: default;
+	color: #09C !important;
 	text-align: center;
 	font: bold 100px/100px "Berkshire Swash", "Open Sans";
 	text-shadow: -5px 5px #DDD;
+}
+
+a.twlyr {
+	text-decoration: none !important;
 }
 
 .twlyr.medium {

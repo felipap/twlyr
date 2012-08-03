@@ -64,11 +64,11 @@
 	.music-info-wrapper img {
 		margin-right: 20px;
 		vertical-align: top;
-		box-shadow: 0 0 4px black;
+		cursor: pointer;
+		box-shadow: 0 0 6px black;
 	}
-
 	
-	.box-wrapper .lyrics-box h2 {
+	.box-wrapper .lyrics-box .msg {
 		margin-bottom: 40px;
 	}
 
@@ -76,6 +76,31 @@
 	.box-wrapper .error-box h2 { margin-bottom: 10px; }
 	.lyrics-box {
 		margin: 40px 0;
+	}
+
+	.wrap-right ul li {
+		list-style: none;
+	}
+	.wrap-right ul li button {
+		display: block;
+		sbackground: white;
+		bordesr: 1px solid white;
+		border-radius: 10px;
+		margin: 7px 0;
+		min-width: 300px;
+		padding: 10px 30px;
+		font-size: 15px;
+		text-align: justify;
+		font-weight: bold;
+		box-shadow: 0 2px 5px #444;
+	}
+
+	.wrap-left h3 {
+		margin-bottom: 10px;
+	}
+
+	.wrap-right ul li button:active {
+		box-shadow: none;
 	}
 
 	</style>
@@ -87,7 +112,7 @@
 
 <div class="container">
 	<div class="boing">
-		<h1 class="twlyr">Twlyr</h1>
+		<div onClick="window.location.replace('')" class="twlyr">Twlyr</div>
 		<h3 class="desc">share a verse on Twitter!</h3>
 		
 		<div id="searchbar">
@@ -101,7 +126,6 @@
 		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabriel_vianna">@gabrielvianna</a>
 	</footer>
 	</div>
-
 </div>
 
 <div class="container black"></div>
@@ -110,11 +134,13 @@
 	<div class="box-wrapper">
 
 		<div class="box lyrics-box">
-		<h2>Hey, we found something!</h2>
+			<div class="msg">
+				<h2>Hey, we've found something!</h2> <!-- ' -->
+			</div>
 			<div class="wrap-left">
 				<div class="music-info-wrapper" style="margin-bottom: 20px">
-					<img src="{{pic-url}}"></img>
-					<div>
+					<img onClick="substituteHash('{{artist-name}}')" src="{{pic-url}}"></img>
+					<div style="width: 166px">
 						artist: <h3 class="artist-name">{{artist-name}}</h3>
 						song: <h3 class="song-name">{{song-name}}</h3>
 					</div>
@@ -133,6 +159,43 @@
 			<div class="wrap-right">
 				<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
 				<div class="lyrics"></div>
+			</div>
+		</div>
+
+		<div class="separsator"></div>
+	</div>
+</script>
+
+<script id="list-box-html" type="text/html">
+	<div class="box-wrapper">
+
+		<div class="box lyrics-box">
+			<div class="msg">
+				{{#msg}}
+					{{{msg}}}
+				{{/msg}}
+				{{^msg}}
+					<h2>Here's a list of songs...</h2> <!-- ' -->
+				{{/msg}}
+			</div>
+			<div class="wrap-left">
+				<div class="music-info-wrapper" style="margin-bottom: 20px">
+					<img src="{{pic-url}}"></img>
+					<div style="width: 166px">
+						artist: <h3>{{artist-name}}</h3>
+						lyrics available: <h3>{{num-lyrics}}</h3>
+					</div>
+				</div>
+
+			</div>
+			<div class="wrap-right">
+				<ul>
+					{{#songs}}
+						<li data-song="{{.}}" data-artist="{{artist-name}}">
+							<button onClick="selectThisSong(this.parentElement)" class="btn btn-info">{{.}}</button>
+						</li>
+					{{/songs}}
+				</ul>
 			</div>
 		</div>
 
@@ -206,6 +269,11 @@ SearchBar = new SearchBar();
 // undefined artists: #!:<song>
 // errors have no urls
 
+function selectThisSong(liObj) {
+
+	substituteHash(liObj.dataset.artist+":"+liObj.dataset.song);
+}
+
 function scrollToContent () {
 	var p = document.querySelector(".container.black").offsetTop;
 	$('html').animate({scrollTop:p}, 1000); // IE, FF
@@ -220,7 +288,8 @@ function updateForm (hashObj) {
 document.querySelector("form.form-search").onsubmit = function () {
 	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
 		music = document.querySelector("#search-music").value.toLowerCase().trim();
-	substituteHash("#!"+escape(artist)+":"+escape(music));
+	if (artist && artist)
+		substituteHash("#!"+escape(artist)+":"+escape(music));
 	return false;
 }
 
@@ -238,15 +307,27 @@ function parseHash (hashUrl) {
 
 function searchSong (artist, song) {
 	vagalume.getMusic(artist, song, function (data) {
-		if (data.music) { // refine this
+		if (!data.artist)
+			new ErrorBox({artist:artist, song:song}, data);	
+		else if (!data.music) {
+			var html = "<h2>We couldn't find {{song}}</h2>\
+				<h3>But, hey, here's a list of songs by {{artist}}</h3>";
+			searchSongsBy(artist, Mustache.render(html, {artist:artist, song:song}));
+		} else {
 			new LyricsBox(data);
 			scrollToContent();
-		} else {
-			new ErrorBox({artist:artist, song:song}, data);
 		}
 	});
 }
 
+function searchSongsBy (artist, msg) {
+	vagalume.getArtistSongs(artist, function (data) {
+		if (!data || data.type === 'notfound')
+			return
+		new ListBox({artist:artist}, data, msg)
+		scrollToContent();
+	});
+}
 /////////////
 
 function substituteHash (newhash) {
@@ -260,13 +341,16 @@ function substituteHash (newhash) {
 function decideOnHash () {
 	// Decide what to do, based hashObj {String artist, String music}
 	var hashObj = parseHash();
- 	if (hashObj.error) {
+	if (!hashObj.artist && !hashObj.music) {
+		return; // Do nothing when fields aren't selected.
+	} else if (hashObj.error) {
  		new ErrorBox('something just hapenned :S');
 	} else if (hashObj.artist && hashObj.music) {
 		searchSong(hashObj.artist, hashObj.music);
-	} else {
+	} else if (hashObj.artist && !hashObj.music) {
+		searchSongsBy(hashObj.artist)
+	} else
 		new ErrorBox('Not all fields were specified. :(')
-	}
 }
 
 (function () {

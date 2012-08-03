@@ -341,10 +341,10 @@
             return String(name).replace(/\s?\(.*$/, '')
         },
         // método interno => tirar do return e colocar lá em cima
-        getArtistURL: function (name, callback, onerror) {
+        getArtistURL: function (name, callback) {
             function onData (data) {
                 if (data.type === 'notfound') {
-                    onerror();
+                    callback(null);
                     return;
                 } else if (data.art.name.toLowerCase().trim() !== name) {
                     console.debug('not an exact match');
@@ -361,8 +361,13 @@
                 .success(onData)
                     .error(onerror);
         },
-        getArtistSongs: function (artist, callback, onerror) {
+        getArtistSongs: function (artist, callback) {
+
             vagalume.getArtistURL(artist, function (url) {
+                if (!url) {
+                    callback({type:'notfound'})
+                    return
+                }
                 function inArray (value, array) {
                     for (var i=0; i<array.length; i++)
                         if (array[i] === value)
@@ -372,18 +377,33 @@
                 
                 function onData (data) {
                     if (!data.artist)
-                        return onerror()
-                    var all = data.artist.lyrics.item, lyrics = [];
+                        return callback({})
+                    var all = data.artist.lyrics.item, songs = [];
                     for (var i=0; i<all.length; i++) {
-                        if (inArray(vagalume.getRawSongName(all[i].desc),lyrics))
+                        if (!all[i].desc || inArray(vagalume.getRawSongName(all[i].desc), songs))
                             continue;
-                        lyrics.push(vagalume.getRawSongName(all[i].desc));
+                        songs.push(vagalume.getRawSongName(all[i].desc));
                     }
-                    callback(lyrics);
+
+                    var obj = {
+                        songs: songs,
+                        artist: {
+                            name: data.artist.desc,
+                            genre: data.artist.genre,
+                            lyrics: data.artist.lyrics,
+                            pic_small: 'http://www.vagalume.com.br/' + data.artist.pic_small,
+                            pic_medium: 'http://www.vagalume.com.br/' + data.artist.pic_medium,
+                            rank: data.artist.rank,
+                            topLyrics: data.artist.toplyrics,
+                            url: data.artist.url
+                        }
+                    };
+                    callback(obj);
                 }
 
-                $.getJSON(url+'/index.js', onData, onerror)
+                $.getJSON(url+'/index.js', onData)
             })
+
         },
     };
 }());
