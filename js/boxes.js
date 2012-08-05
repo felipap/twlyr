@@ -265,15 +265,19 @@
             selector.addSelectionEvent();
         }
 
-        function renderHTML (artist, song) {
-        	var template = document.querySelector('#lyrics-box-html').innerHTML
-        		, html = Mustache.render(template, {
-	        		"artist-name": artist.name,
-	        		"song-name": song.name,
-	        		"artist-url": artist.url,
-	        		"pic-url": artist.pic_medium // pic_small
-	        	})
+        function renderHTML (artist, music, album) {
+        	var template = document.querySelector('#lyrics-box-html').innerHTML;
+        	var html = Mustache.render(template, {
+                "artist-name": artist.name,
+                "music-name": music.name,
+                "album-name": album && album.name ? album.name + ' \'' + album.year.slice(2) : '',
+                "artist-url": artist.url,
+                "pic-url": album && album.picUrl ? album.picUrl : artist.picUrl_medium, // pic_small
+                "youtubeId": music.youtubeId || ''
+            });
             document.querySelector(".container.black").innerHTML = html;
+            if (!music.youtubeId)
+                document.querySelector('#youtube-box').style.display = 'none';
         }
 
         var _this = this;
@@ -281,7 +285,7 @@
 
         console.log('received', data)
 
-        renderHTML(data.artist, data.music)
+        renderHTML(data.artist, data.music, data.music.album)
 
         selector = new Selector()
         writeLyrics(data.music.lyrics)
