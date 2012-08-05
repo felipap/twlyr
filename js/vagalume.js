@@ -189,6 +189,62 @@
                     
             return vagalume;
         },
+        getMusicInfoFromName: function (artistName, musicName, onCaptcha, onEnd) {
+            function onData(data) {
+                if (!data || !data.type || data.type === 'notfound' ||
+                    !data.art || !data.mus || data.mus.length <= 0) {
+                    onEnd({});
+                    return;
+                }
+                
+                var obj = {
+                    artist: {
+                        name: data.art.name,
+                        url: data.art.url,
+                        picUrl_small: data.art.pic_small,
+                        picUrl_medium: data.art.pic_medium,
+                    }
+                }
+                
+                if (data.type !== 'exact') {
+                    onEnd(obj);
+                    return;
+                }
+                
+                obj.music = {
+                    name: data.mus[0].name,
+                    lyrics: data.mus[0].text,
+                    youtubeId: data.mus[0].ytid,
+                };
+                
+                if (data.mus[0].alb) {
+                    obj.music.album = {
+                        name: data.mus[0].alb.name,
+                        year: data.mus[0].alb.year,
+                        picUrl: data.mus[0].alb.img,
+                    };
+                }
+               
+                onEnd(obj);
+            }
+            
+            if (!artistName ||
+                !musicName ||
+                typeof onCaptcha !== 'function' ||
+                typeof onEnd !== 'function')
+                return null;
+                
+            doQueryCaptcha(
+                'http://www.vagalume.com.br/api/search.php?' +
+                'art=' + encodeURIComponent(artistName) +
+                '&mus=' + encodeURIComponent(musicName) +
+                '&extra=alb,ytid,artpic',
+                onCaptcha,
+                onData
+            );
+                    
+            return vagalume;
+        },
         getMusicInfoFromId: function (musicId, onCaptcha, onEnd) {
             function onData(data) {
                 if (!data || !data.type || data.type === 'notfound' ||
