@@ -271,7 +271,7 @@ SearchBar = new SearchBar();
 
 function selectThisSong(liObj) {
 
-	substituteHash(liObj.dataset.artist+":"+liObj.dataset.song);
+	substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
 }
 
 function scrollToContent () {
@@ -288,8 +288,8 @@ function updateForm (hashObj) {
 document.querySelector("form.form-search").onsubmit = function () {
 	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
 		music = document.querySelector("#search-music").value.toLowerCase().trim();
-	if (artist && artist)
-		substituteHash("#!"+escape(artist)+":"+escape(music));
+	if (artist && music)
+		substituteHash("#!" +encodeURIComponent(artist) + ":" + encodeURIComponent(music));
 	return false;
 }
 
@@ -300,8 +300,8 @@ function parseHash (hashUrl) {
 		// Remember to take down website when they come up with an artist named 'error'.
 		return {artist: null, music: null, error: true}
 	}
-	var artist = unescape(hash.split(':')[0] || '').capitalize(),
-		music = unescape(hash.split(':')[1] || '').capitalize();
+	var artist = decodeURIComponent(hash.split(':')[0] || '').capitalize(),
+		music = decodeURIComponent(hash.split(':')[1] || '').capitalize();
 	return {artist: artist, music: music}
 }
 
@@ -311,8 +311,8 @@ function searchSong (artist, song) {
 			new ErrorBox({artist:artist, song:song}, data);	
 		else if (!data.music) {
 			var html = "<h2>We couldn't find {{song}}</h2>\
-				<h3>But, hey, here's a list of songs by {{artist}}</h3>";
-			searchSongsBy(artist, Mustache.render(html, {artist:artist, song:song}));
+				<h3>But here's a list of songs by {{artist}}</h3>";
+			searchSongsBy(artist, Mustache.render(html, {artist: artist, song: song}));
 		} else {
 			new LyricsBox(data);
 			scrollToContent();
@@ -323,8 +323,8 @@ function searchSong (artist, song) {
 function searchSongsBy (artist, msg) {
 	vagalume.getArtistSongs(artist, function (data) {
 		if (!data || data.type === 'notfound')
-			return
-		new ListBox({artist:artist}, data, msg)
+			return;
+		new ListBox({artist: artist}, data, msg);
 		scrollToContent();
 	});
 }
