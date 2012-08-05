@@ -213,9 +213,11 @@
 			<div class="wrap-right">
 				<ul>
 					{{#songs}}
+						{{#.}} {{! double check it!}}
 						<li data-song="{{.}}" data-artist="{{artist-name}}">
 							<button onClick="selectThisSong(this.parentElement)" class="btn btn-info">{{.}}</button>
 						</li>
+						{{/.}}
 					{{/songs}}
 				</ul>
 			</div>
