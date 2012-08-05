@@ -106,6 +106,10 @@
 	.wrap-right ul li button:active {
 		box-shadow: none;
 	}
+	
+	.videoclip {
+		padding: 10px;
+	}
 
 	</style>
 
@@ -127,7 +131,7 @@
 			</form>
 		</div>
 	<footer>
-		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabriel_vianna">@gabrielvianna</a>
+		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabrielsoldani">@gabrielsoldani</a>
 	</footer>
 	</div>
 </div>
@@ -143,10 +147,13 @@
 			</div>
 			<div class="wrap-left">
 				<div class="music-info-wrapper" style="margin-bottom: 20px">
-					<img onClick="substituteHash('{{artist-name}}')" src="{{pic-url}}"></img>
+					<img onClick="substituteHash(encodeURIComponent('{{artist-name}}'))" src="{{pic-url}}"></img>
 					<div style="width: 166px">
 						artist: <h3 class="artist-name">{{artist-name}}</h3>
-						song: <h3 class="song-name">{{song-name}}</h3>
+						song: <h3 class="song-name">{{music-name}}</h3>
+						{{#album-name}}
+							from album<h3 class="song-name">{{album-name}}</h3>
+						{{/album-name}}
 					</div>
 				</div>
 
@@ -159,9 +166,12 @@
 						<button class="btn btn-success tweet-button" onClick="openTweetPopup()">Tweet</button>
 					</div>
 				</div>
+				<div class="videoclip">
+					<iframe width="380" height="214" src="http://www.youtube.com/embed/{{youtubeId}}" frameborder="0" allowfullscreen></iframe>
+				</div>
 			</div>
 			<div class="wrap-right">
-				<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
+			 	<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
 				<div class="lyrics"></div>
 			</div>
 		</div>
@@ -216,8 +226,8 @@
 			{{/unknown-error}}
 
 			{{#artist-404}}
-				<h2>Artist '{{artist-name}}' was not found</h2> <!-- ' -->
-				<h3>We're sorry. You sure you're spelling it correctly?</h3> <!-- ' -->
+				<h2>Artist {{artist-name}} was not found</h2> <!-- ' -->
+				<h3>We're sorry. Are you sure you're spelling it correctly?</h3> <!-- ' -->
 			{{/artist-404}}
 
 			{{#music-404}}
@@ -230,36 +240,6 @@
 			{{/general-error}}
 		</div>
 	</div>
-</script>
-
-<script id="BOINGartist-box-html" type="text/html">
-		
-	(function () {
-	    function getArtistUrl() {
-	        if (!window.location.hash)
-	            return '';
-	        return 'http://www.vagalume.com.br/' + window.location.hash.slice(2).split(':')[1] + '/';
-	    }
-	    
-	    vagalume.getMusicListFromArtistUrl(
-	        getArtistUrl(),
-	        function (data) {
-	            if (data.length === 0) {
-	                window.location.hash = '#!error:2';
-	                return;
-	            }
-	            for (var i = 0; i < data.length; i++) {
-	                $('#content ol').append(
-	                    $('<li>').append(
-	                        $('<a>').attr('href', '#!' + data[i].id).append(
-	                            data[i].name
-	                        )
-	                    )
-	                );
-	            }
-	        }
-	    );
-	}());
 </script>
 
 <script>
@@ -275,7 +255,7 @@ SearchBar = new SearchBar();
 
 function selectThisSong(liObj) {
 
-	substituteHash(liObj.dataset.artist+":"+liObj.dataset.song);
+	substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
 }
 
 function scrollToContent () {
@@ -292,8 +272,8 @@ function updateForm (hashObj) {
 document.querySelector("form.form-search").onsubmit = function () {
 	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
 		music = document.querySelector("#search-music").value.toLowerCase().trim();
-	if (artist && artist)
-		substituteHash("#!"+escape(artist)+":"+escape(music));
+	if (artist && music)
+		substituteHash("#!" +encodeURIComponent(artist) + ":" + encodeURIComponent(music));
 	return false;
 }
 
@@ -304,19 +284,19 @@ function parseHash (hashUrl) {
 		// Remember to take down website when they come up with an artist named 'error'.
 		return {artist: null, music: null, error: true}
 	}
-	var artist = unescape(hash.split(':')[0] || '').capitalize(),
-		music = unescape(hash.split(':')[1] || '').capitalize();
+	var artist = decodeURIComponent(hash.split(':')[0] || '').capitalize(),
+		music = decodeURIComponent(hash.split(':')[1] || '').capitalize();
 	return {artist: artist, music: music}
 }
 
-function searchSong (artist, song) {
-	vagalume.getMusic(artist, song, function (data) {
+function searchSong (artist, music) {
+	vagalume.getMusicInfoFromName(artist, music, function () {}, function (data) {
 		if (!data.artist)
-			new ErrorBox({artist:artist, song:song}, data);	
+			new ErrorBox({artist:artist, song: music}, data);	
 		else if (!data.music) {
 			var html = "<h2>We couldn't find {{song}}</h2>\
-				<h3>But, hey, here's a list of songs by {{artist}}</h3>";
-			searchSongsBy(artist, Mustache.render(html, {artist:artist, song:song}));
+				<h3>But here's a list of songs by {{artist}}</h3>";
+			searchSongsBy(artist, Mustache.render(html, {artist: artist, song: song}));
 		} else {
 			new LyricsBox(data);
 			scrollToContent();
@@ -327,8 +307,8 @@ function searchSong (artist, song) {
 function searchSongsBy (artist, msg) {
 	vagalume.getArtistSongs(artist, function (data) {
 		if (!data || data.type === 'notfound')
-			return
-		new ListBox({artist:artist}, data, msg)
+			return;
+		new ListBox({artist: artist}, data, msg);
 		scrollToContent();
 	});
 }
