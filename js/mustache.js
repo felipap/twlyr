@@ -38,9 +38,8 @@ var Mustache;
 
     if (typeof send === "function") {
       send(result);
-    } else {
-      return result;
     }
+    return result;
   };
 
   var whiteRe = /\s*/;
@@ -445,7 +444,7 @@ var Mustache;
    * to a single token.
    */
   function squashTokens(tokens) {
-    var lastToken;
+    var lastToken = null;
 
     for (var i = 0; i < tokens.length; ++i) {
       var token = tokens[i];
