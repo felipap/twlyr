@@ -314,8 +314,12 @@
         renderHTML(data.artist, data.songs);
     }
 
-    window.SearchBar = function () {
+    window.SearchBar = function SearchBar () {
     	// make song ranking available for autoComplete
+
+    	// make sure 'new' keyword is used
+    	if (!(this instanceof SearchBar))
+    		return new SearchBar()
 
 		this.topArtists = null
 		var _this = this;

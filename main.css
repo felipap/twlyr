@@ -157,7 +157,7 @@ a.twlyr {
 
 footer {
 	text-align: center;
-	font: 13px/20px "Open Sans";
+	font: 14px/20px Karla, "Open Sans";
 	color: #333;
 	opacity: .7;
 	-webkit-transition: all 100ms linear;
