@@ -1,352 +1,263 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>	
-	<meta charset='utf-8'> 
-	<title>Twlyr - Share a Song!</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Twlyr - Share a Song!</title>
 
-	<link href="bootstrap/css/bootstrap.css" rel="stylesheet"></link>
-	<link href='main.css' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans|Karla' rel='stylesheet' type='text/css'>
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href='main.css' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans|Karla' rel='stylesheet' type='text/css'>
 
-	<script src="js/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"> </script>
+    <script src="js/bootstrap.min.js"> </script>
+    <script src="js/mustache.js"> </script>
 
-	<script src="js/vagalume.js" charset="utf-8"></script>
-	<script src="js/boxes.js" charset="utf-8"></script>
-	<script src="js/mustache.js"></script>
-
-	<style>
-
-	body {
-		position: relative;
-	}
-
-	.wrap-left {
-		width: 380px;
-		float: left;
-		padding-right: 20px;
-	}
-
-	.wrap-right {
-		float: right;
-		width: 400px;
-	}
-	
-	.boing {
-		margin-top: 200px;
-		margin-bottom: 150px;
-	}
-
-	.separator {
-		border-top: 3px dotted white;
-	}
-
-	/* overwrite bootstrap's .container */
-	.container.black {
-		width: auto;
-		background: #777;
-		background: url(images/blackbg.png);
-		box-shadow: inset 0 10px 40px -10px black;
-		top: 70%;
-	}
-	.container.black:not(:empty) {
-		border-top: 3px dotted white;
-	}
-
-	.box-wrapper {
-		margin: 0 auto;
-		margin-bottom: 30px;
-		width: 800px;
-	}
-
-	.music-info-wrapper > * {
-		display: inline-block;
-		color: #222;
-		font: 14px/20px "Open Sans";
-	}
-
-	.music-info-wrapper img {
-		margin-right: 20px;
-		vertical-align: top;
-		cursor: pointer;
-		box-shadow: 0 0 6px black;
-	}
-	
-	.box-wrapper .lyrics-box .msg {
-		margin-bottom: 40px;
-	}
-
-	.box-wrapper .error-box { margin: 30px; }
-	.box-wrapper .error-box h2 { margin-bottom: 10px; }
-	.lyrics-box {
-		margin: 40px 0;
-	}
-
-	.wrap-right ul li {
-		list-style: none;
-	}
-	.wrap-right ul li button {
-		display: block;
-		sbackground: white;
-		bordesr: 1px solid white;
-		border-radius: 10px;
-		margin: 7px 0;
-		min-width: 300px;
-		padding: 10px 30px;
-		font-size: 15px;
-		text-align: justify;
-		font-weight: bold;
-		box-shadow: 0 2px 5px #444;
-	}
-
-	.wrap-left h3 {
-		margin-bottom: 10px;
-	}
-
-	.wrap-right ul li button:active {
-		box-shadow: none;
-	}
-	
-	.videoclip {
-		margin-top: 20px;
-	}
-
-	</style>
-
+    <script src="js/vagalume.js" charset="utf-8"> </script>
+    <script src="js/boxes.js" charset="utf-8"> </script>
 </head>
 <body>
 
-<div class="beta-strip">Beta v1.0</div>
+    <div class="beta-strip">version 1.0</div>
 
-<div class="container">
-	<div class="boing">
-		<div onClick="window.location.replace('')" class="twlyr">Twlyr</div>
-		<h3 class="desc">share a verse on Twitter!</h3>
-		
-		<div id="searchbar">
-			<form class="form-search">
-				<input type="text" autocomplete="off" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
-				<input type="text" autocomplete="off" placeholder="choose a song" class="input-medium search-query" id="search-music">
-				<button type="submit" class="btn btn-warning btn-large">Search</button>
-			</form>
-		</div>
-	<footer>
-		2012 &reg created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabrielsoldani">@gabrielsoldani</a>
-	</footer>
-	</div>
-</div>
+    <div class="container">
+        <div class="boing">
+            <div onClick="window.location.replace('')" class="twlyr">Twlyr</div>
+            <h3 class="desc">share a verse on Twitter!</h3>
+	
+            <div id="searchbar">
+                <form class="form-search">
+                    <input type="text" autocomplete="off" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
+                    <input type="text" autocomplete="off" placeholder="choose a song" class="input-medium search-query" id="search-song">
+                    <button type="submit" class="button blue">Search</button>
+                </form>
+            </div>
+            <footer>
+                2012 &reg; created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabrielsoldani">@gabrielsoldani</a>
+            </footer>
+        </div>
+    </div>
 
-<div class="container black"></div>
+    <div class="container black"></div> <!-- must stay completely empty -->
 
 <script id="lyrics-box-html" type="text/html">
-	<div class="box-wrapper">
+    <div class="box-wrapper">
 
-		<div class="box lyrics-box">
-			<div class="msg">
-				<h2>Hey, we've found something!</h2> <!-- ' -->
-			</div>
-			<div class="wrap-left">
-				<div class="music-info-wrapper" style="margin-bottom: 20px">
-					<img onClick="substituteHash(encodeURIComponent('{{artist-name}}'))" src="{{pic-url}}"></img>
-					<div style="width: 166px">
-						artist: <h3 class="artist-name">{{artist-name}}</h3>
-						song: <h3 class="song-name">{{music-name}}</h3>
-						{{#album-name}}
-							from album<h3 class="song-name">{{album-name}}</h3>
-						{{/album-name}}
-					</div>
-				</div>
+        <div class="box lyrics-box">
+            <div class="msg">
+                <h2>Hey, we've found something!</h2> <!-- ' -->
+            </div>
+            <div class="wrap-left">
+                <div class="music-info-wrapper" style="margin-bottom: 20px">
+                    <img onClick="substituteHash(encodeURIComponent('{{artist-name}}'))" src="{{pic-url}}"></img>
+                    <div style="width: 166px">
+                        artist: <h3 class="artist-name">{{artist-name}}</h3>
+                        song: <h3 class="song-name">{{song-name}}</h3>
+                        {{#album-name}}
+                        from album<h3 class="album-name">{{album-name}}</h3>
+                        {{/album-name}}
+                    </div>
+                </div>
 
 
-				<div class="tweet-box">
-					<textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
+                <div class="tweet-box">
+                    <textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
 
-					<div class="align-line">
-						<div class="twtcounter">0</div>
-						<button class="btn btn-success tweet-button" onClick="openTweetPopup()">Tweet</button>
-					</div>
-				</div>
-				<div class="videoclip">
-					<iframe width="380" height="214" src="http://www.youtube.com/embed/{{youtubeId}}" frameborder="0" allowfullscreen></iframe>
-				</div>
-			</div>
-			<div class="wrap-right">
-			 	<h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
-				<div class="lyrics"></div>
-			</div>
-		</div>
+                    <div class="align-line">
+                        <div class="twtcounter">0</div>
+                        <button class="btn btn-success tweet-button" onClick=" openTweetPopup() ">Tweet</button>
+                    </div>
+                </div>
+                <div class="videoclip">
+                    <iframe width="380" height="214" src="http://www.youtube.com/embed/{{youtubeId}}" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="wrap-right">
+                <h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
+                <div class="lyrics"></div>
+            </div>
+        </div>
 
-		<div class="separator"></div>
-	</div>
+        <div class="separator"></div>
+    </div>
 </script>
 
 <script id="list-box-html" type="text/html">
-	<div class="box-wrapper">
+    <div class="box-wrapper">
 
-		<div class="box lyrics-box">
-			<div class="msg">
-				{{#msg}}
-					{{{msg}}}
-				{{/msg}}
-				{{^msg}}
-					<h2>Here's a list of songs...</h2> <!-- ' -->
-				{{/msg}}
-			</div>
-			<div class="wrap-left">
-				<div class="music-info-wrapper" style="margin-bottom: 20px">
-					<img src="{{pic-url}}"></img>
-					<div style="width: 166px">
-						artist: <h3>{{artist-name}}</h3>
-						lyrics available: <h3>{{num-lyrics}}</h3>
-					</div>
-				</div>
+        <div class="box lyrics-box">
+            <div class="msg">
+                {{#msg}}
+                {{{msg}}}
+                {{/msg}}
+                {{^msg}}
+                <h2>Here's a list of songs...</h2> <!-- ' -->
+                {{/msg}}
+            </div>
+            <div class="wrap-left">
+                <div class="music-info-wrapper" style="margin-bottom: 20px">
+                    <img src="{{pic-url}}"></img>
+                    <div style="width: 166px">
+                        artist: <h3>{{artist-name}}</h3>
+                        lyrics available: <h3>{{num-lyrics}}</h3>
+                    </div>
+                </div>
 
-			</div>
-			<div class="wrap-right">
-				<ul>
-					{{#songs}}
-						{{#.}} {{! double check it!}}
-						<li data-song="{{.}}" data-artist="{{artist-name}}">
-							<button onClick="selectThisSong(this.parentElement)" class="btn btn-info">{{.}}</button>
-						</li>
-						{{/.}}
-					{{/songs}}
-				</ul>
-			</div>
-		</div>
+            </div>
+            <div class="wrap-right">
+                <ul>
+                    {{#songs}}
+                    {{#.}} {{! double check it!}}
+                    <li data-song="{{.}}" data-artist="{{artist-name}}">
+                        <button onClick=" selectThisSong(this.parentElement) " class="btn btn-info">{{.}}</button>
+                    </li>
+                    {{/.}}
+                    {{/songs}}
+                </ul>
+            </div>
+        </div>
 
-		<div class="separsator"></div>
-	</div>
+        <div class="separsator"></div>
+    </div>
 </script>
 
 <script id="error-box-html" type="text/html">
-	<div class="box-wrapper">
-		<div class="box error-box">
-			{{#unknown-error}}
-				<h2>Unknown Error</h2>
-				<h3>Something hapenned, but...</h3>
-			{{/unknown-error}}
+    <div class="box-wrapper">
+        <div class="box error-box">
+            {{#unknown-error}}
+            <h2>Unknown Error</h2>
+            <h3>Something hapenned, but...</h3>
+            {{/unknown-error}}
 
-			{{#artist-404}}
-				<h2>Artist {{artist-name}} was not found</h2> <!-- ' -->
-				<h3>We're sorry. Are you sure you're spelling it correctly?</h3> <!-- ' -->
-			{{/artist-404}}
+            {{#artist-404}}
+            <h2>Artist {{artist-name}} was not found</h2> <!-- ' -->
+            <h3>We're sorry. Are you sure you're spelling it correctly?</h3> <!-- ' -->
+            {{/artist-404}}
 
-			{{#music-404}}
-				<h2>Song not found</h2>
-				<h3>We couldn't find {{music-name}} by {{artist-name}}. </h3><!-- ' -->
-			{{/music-404}}
+            {{#song-404}}
+            <h2>Song not found</h2>
+            <h3>We couldn't find {{song-name}} by {{artist-name}}. </h3><!-- ' -->
+            {{/song-404}}
 
-			{{#general-error}}
-				<h2>{{general-error}}</h2>
-			{{/general-error}}
-		</div>
-	</div>
+            {{#general-error}}
+            <h2>{{general-error}}</h2>
+            {{/general-error}}
+        </div>
+    </div>
 </script>
 
 <script>
 
-SearchBar = new SearchBar();
+    SearchBar = new SearchBar();
 
-//////////////////
+    function selectThisSong(liObj) {
 
-// format: #!<artist>:<song>
-// undefined songs: #!<artist>:?
-// undefined artists: #!:<song>
-// errors have no urls
+        substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
+    }
 
-function selectThisSong(liObj) {
 
-	substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
-}
+    function scrollToContent(what) {
+        var p = (what || document.querySelector(".container.black")).offsetTop;
+        $('html, body').animate({ scrollTop: p }, {
+                duration: 1000,
+                step: function (e) {
+                    window.forcedScroll = true;
+                }
+            });
+    
+    }
 
-function scrollToContent () {
-	var p = document.querySelector(".container.black").offsetTop;
-	$('html').animate({scrollTop:p}, 1000); // IE, FF
-	$('body').animate({scrollTop:p}, 1000); // chrome, don't know if safary works	
-}
-
-function updateForm (hashObj) {
-	document.querySelector("#search-artist").value = hashObj.artist;
-	document.querySelector("#search-music").value = hashObj.music;
-}
-
-document.querySelector("form.form-search").onsubmit = function () {
-	var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
-		music = document.querySelector("#search-music").value.toLowerCase().trim();
-	if (artist && music)
-		substituteHash("#!" +encodeURIComponent(artist) + ":" + encodeURIComponent(music));
-	return false;
-}
-
-function parseHash (hashUrl) {
-	// Return {String artist, String music} based on location.hash.
-	var hash = (hashUrl || location.hash).replace(/^#\!?/, ''); // remove #! from beginning
-	if (hash === 'error') {
-		// Remember to take down website when they come up with an artist named 'error'.
-		return {artist: null, music: null, error: true}
-	}
-	var artist = decodeURIComponent(hash.split(':')[0] || '').capitalize(),
-		music = decodeURIComponent(hash.split(':')[1] || '').capitalize();
-	return {artist: artist, music: music}
-}
-
-function searchSong (artist, music) {
-	vagalume.getMusicInfoFromName(artist, music, function () {}, function (data) {
-		if (!data.artist)
-			new ErrorBox({artist:artist, song: music}, data);	
-		else if (!data.music) {
-			var html = "<h2>We couldn't find {{song}}</h2>\
-				<h3>But here's a list of songs by {{artist}}</h3>";
-			searchSongsBy(artist, Mustache.render(html, {artist: artist, song: song}));
-		} else {
-			new LyricsBox(data);
-			scrollToContent();
-		}
-	});
-}
-
-function searchSongsBy (artist, msg) {
-	vagalume.getArtistSongs(artist, function (data) {
-		if (!data || data.type === 'notfound')
-			return;
-		new ListBox({artist: artist}, data, msg);
-		scrollToContent();
-	});
-}
-/////////////
-
-function substituteHash (newhash) {
-	var newhash = "#!"+newhash.replace(/^#\!?/, '');
-	location.hash = newhash;
-	decideOnHash();
-	// if (history && history.pushState)
-	// 	history.pushState({module:"leave"}, document.title, this.href);
-}
-
-function decideOnHash () {
-	// Decide what to do, based hashObj {String artist, String music}
-	var hashObj = parseHash();
-	if (!hashObj.artist && !hashObj.music) {
-		return; // Do nothing when fields aren't selected.
-	} else if (hashObj.error) {
- 		new ErrorBox('something just hapenned :S');
-	} else if (hashObj.artist && hashObj.music) {
-		searchSong(hashObj.artist, hashObj.music);
-	} else if (hashObj.artist && !hashObj.music) {
-		searchSongsBy(hashObj.artist)
-	} else
-		new ErrorBox('Not all fields were specified. :(')
-}
-
-(function () {
-	var h = parseHash();
-	updateForm(h)
-	decideOnHash()
-})();
+    $('body,html').bind('scroll mousedown DOMMouseScroll mousewheel keyup', function(e){
+        if ( e.which > 0 || e.type == "mousedown" || e.type == "mousewheel"){
+            $("html,body").stop();
+        }
+    })
 
 
 
+    function updateForm(hashObj) {
+        document.querySelector("#search-artist").value = hashObj.artist;
+        document.querySelector("#search-song").value = hashObj.song;
+    }
+
+    document.querySelector("form.form-search").onsubmit = function() {
+        var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
+            song = document.querySelector("#search-song").value.toLowerCase().trim();
+        if (artist && song)
+            substituteHash("#!" + encodeURIComponent(artist) + ":" + encodeURIComponent(song));
+        return false;
+    };
+
+    function parseHash(hashUrl) {
+        // Return {String artist, String song} based on location.hash.
+        var hash = (hashUrl || location.hash).replace(/^#\!?/, ''); // remove #! from beginning
+        if (hash === 'error') {
+            // Remember to take down website when they come up with an artist named 'error'.
+            return { artist: null, song: null, error: true };
+        }
+        var artist = decodeURIComponent(hash.split(':')[0] || '').capitalize(),
+            song = decodeURIComponent(hash.split(':')[1] || '').capitalize();
+        return { artist: artist, song: song };
+    }
+
+    function searchSong(artist, song) {
+        vagalume.getTrackInfoFromName(artist, song, function() {
+        }, function(data) {
+            var box;
+            if (!data.artist) {
+                box = new ErrorBox({ artist: artist, song: song }, data);
+            } else if (!data.song) {
+                var html = "<h2>We couldn't find {{song}}</h2><h3>But here's a list of songs by {{artist}}</h3>";
+                searchSongsBy(artist, Mustache.render(html, { artist: artist, song: song }));
+            } else {
+                box = new LyricsBox(data);
+                scrollToContent();
+            }
+        });
+    }
+
+    function searchSongsBy(artist, msg) {
+        vagalume.getArtistSongs(artist, function(data) {
+            if (!data || data.type === 'notfound')
+                return;
+            var box = new ListBox({ artist: artist }, data, msg);
+            scrollToContent();
+        });
+    }
+
+    /////////////
+
+    function substituteHash(newhash) {
+        newhash = "#!" + newhash.replace(/^#\!?/, '');
+        location.hash = newhash;
+        decideOnHash();
+        // if (history && history.pushState)
+        // 	history.pushState({module:"leave"}, document.title, this.href);
+    }
+
+    function decideOnHash() {
+        // Decide what to do, based hashObj {String artist, String song}
+        var hashObj = parseHash();
+        if (!hashObj.artist && !hashObj.song) {
+            return; // Do nothing when fields aren't selected.
+        } else {
+            var box;
+            if (hashObj.error) {
+                box = new ErrorBox('something just hapenned :S');
+            } else if (hashObj.artist && hashObj.song) {
+                searchSong(hashObj.artist, hashObj.song);
+            } else if (hashObj.artist && !hashObj.song) {
+                searchSongsBy(hashObj.artist);
+            } else {
+                box = new ErrorBox('Not all fields were specified. :(');
+            }
+        }
+    }
+
+    (function() {
+        var h = parseHash();
+        updateForm(h);
+        decideOnHash();
+    })();
 </script>
 </body>
 </html>

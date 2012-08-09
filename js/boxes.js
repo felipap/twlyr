@@ -1,33 +1,131 @@
-// js/boxes.js for twlyr
-// the boxes to be defined here are:
-// - LyricsBox, ErrorBox (todo), ListBox (todo), SearchBar
+// js/boxes.js for Twlyr
+
+// TODOs:
+// solve compatibility issues for using elm.classList?
+
+// deixe essa ** aqui, lindo ♥.
+String.prototype.trim = String.prototype.trim || function () {
+    return String(this).replace(/^\s+|\s+$/g, '')
+}
+
+String.prototype.removePunctuation = function () {
+    return String(this).replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
+}
+
+String.prototype.capitalize = function () {
+    return String(this).replace( /(^|\s)([a-z])/g , function (m, p1, p2) {
+        return p1 + p2.toUpperCase();
+    });
+};
 
 (function (window, document, undefined) {
 
 	'use strict'
 
-    // deixe essa ** aqui, lindo ♥.
-    String.prototype.trim = String.prototype.trim || function () {
-        return String(this).replace(/^\s+|\s+$/g, '')
-    }
+	var VERBOSE = true
 
-    String.prototype.removePunctuation = function () {
-        return String(this).replace(/^\s+|\s+$/g, '').replace(/[,.]+$/g, '')
-    }
+    window.SearchBar = function SearchBar () {
 
-    String.prototype.capitalize = function () {
-	    return String(this).replace( /(^|\s)([a-z])/g , function (m, p1, p2) {
-	        return p1 + p2.toUpperCase();
-	    });
-	};
+    	if (!(this instanceof SearchBar))
+    		return new SearchBar()
 
-	window.LyricsBox = function (data) {
+		this.topArtists = null
+		var _this = this;
+
+		function _getTopArtists (callback, onerror) {
+			var monthlyRankURL = "http://www.vagalume.com.br/api/rank.php?\
+				type=art&period=month&limit=300&scope=internacional&period=month"
+			
+			function onData (data) {
+				if (!data.art)
+					return onerror(data)
+				var top = data.art.month.internacional, artists = []
+				for (var i=0; i<top.length; i++)
+					artists.push(top[i].name);
+				callback(artists)
+			}
+
+			$.getJSON(monthlyRankURL, onData, onerror);
+		}
+
+		this.changeTypeahead = function (elem, obj) {
+			if ($(elem).data('typeahead')) {
+				for (var p in obj)
+				if (obj.hasOwnProperty(p))
+					$(elem).data('typeahead')[p] = obj[p]
+			} else {
+				console.log('typeahead didn\'t exist on', elem)
+				$(elem).typeahead(obj)
+			}
+		}
+
+		this.getTopArtists = function (callback, onerror) {
+			function onData (top) {
+				_this.topArtists = top
+				console.log('top artists is now [', top.length, ']', top)
+				callback(top)
+			}
+			function onError (data) {
+				console.debug('deu M...', data)
+				if (typeof onerror !== 'undefined')
+					onerror(data)
+			}
+			if (this.topArtists)
+				callback(this.topArtists)
+			else {
+				
+				// make call vagalume.js?
+				_getTopArtists(onData, onError)
+			}
+		}
+
+		document.querySelector("#search-artist").onfocus = function () {
+			_this.getTopArtists(function (list) {
+				_this.changeTypeahead($("#search-artist"), { source: list });
+			});
+		}
+
+		document.querySelector("#search-song").onfocus = function () {
+			var name = document.querySelector("#search-artist").value;
+			if (!name) {
+				_this.changeTypeahead($("#search-song"), { source: [] });
+			}
+
+			function onData (bool) {
+				function onData (list) {
+					console.log('list of songs for', name, list);
+					_this.changeTypeahead($("#search-song"), { source: list.songs });
+				}
+				if (!bool) { // artist was not found
+					console.log('artist', name, 'not found');
+					_this.changeTypeahead($("#search-artist"), { source: [] });
+					return;
+				}
+
+				vagalume.getArtistSongs(name, onData);				
+			}
+
+			vagalume.artistExists(name, onData);
+		}
+
+		document.querySelector('#searchbar form').onsubmit = function () {
+			var artist = encodeURIComponent(document.querySelector('#search-artist').value);
+			var song = encodeURIComponent(document.querySelector('#search-song').value);
+			window.location.hash = '#!search:' + artist + ':' + song;
+			return false;
+		}
+	}
+
+	window.LyricsBox = function LyricsBox (data) {
+    	
+    	if (!(this instanceof LyricsBox))
+    		return new LyicsBox()
 
 		// Selector is an intern object of the LyricsBox.
 	    function Selector () {
-	    	// solve compatibility issues for using elm.classList?
-
-	        var _this = this;
+	    	
+	    	if (!(this instanceof Selector))
+	    		return new Selector()
 
 	        this.unselectWords = function () {
 	            var selected = document.querySelectorAll('.word.selected')
@@ -37,7 +135,6 @@
 
 	        this.selectRange = function (a, b) {
 	            // Make selection starting at A and ending at B.
-
 	            var w = _this.getRange(a, b)
 	            for (var i = 0; i< w.length; i++)
 	                w[i].classList.add('selected')
@@ -47,11 +144,9 @@
 
 	        this.getSplitRange = function (a, b) {
 	            // Get list of words in the range, divided according to the lines they're in.
-
 	            var words = _this.getRange(a, b)
 	                , selection = []
-	            
-	            var i = 0, w = null
+	                , i = 0, w = null
 	            while (w = words[i++]) {
 	                if (selection.length == 0 || (words[i - 2].parentElement !== w.parentElement))
 	                    selection.push([w])
@@ -64,22 +159,18 @@
 
 	        this.getRange = function (a, b) {
 	            // Return the list of words between (an including) A and B.
+	            if (!a || !b) return []
 
-	            if (!a || !b)
-	                return []
-	            
 	            var words = Array.prototype.slice.call(document.querySelectorAll('.word'))
 	                , ia = words.indexOf(a)
 	                , ib = words.indexOf(b)
+	                , first, last
 
 	            if (ia < ib)
-	                first = ia, last = ib
+	            	return worfs.slice(ia, ib+1)
 	            else if (ia > ib)
-	                var first = ib, last = ia
-	            else // ia === ib
-	                return [a]
-
-	            return words.slice(first, last+1)
+	            	return words.slice(ib, ia+1)
+	            else return [a]
 	        }
 
 	        this.getSelectionEnds = function () {
@@ -113,10 +204,8 @@
 
 	            function mouseoverWord (e) {
 	                hoverWord = e.target
-
 	                if (!mouseDown)
 	                    return
-	        
 	                if (!endWord) {
 	                    // cursor, after clicked, moved over to a word.
 	                    // in that case, set endWord to be the first one "hovered".
@@ -138,14 +227,14 @@
 	                words[i].addEventListener('mouseover', mouseoverWord)
 	                words[i].addEventListener('mouseout', mouseoutWord)
 	            }
-	        }
+			}
 
 	        // everybody ♥ closures!
-	        var mouseDown = false // mouse starts unclicked
-	            , endWord = null // the first word of a selection process, default to null
-	            , hoverWord = null // the actual word being hovered, default to null 
-	            , lastSelected = null // the last word selected before 
-	        var VERBOSE = false
+	        var _this = this
+				, mouseDown = false // mouse starts unclicked
+				, endWord = null // the first word of a selection process, default to null
+				, hoverWord = null // the actual word being hovered, default to null 
+				, lastSelected = null // the last word selected before 
 
 	        function onMouseDown (e) {
 	            if (e.button !== 0)
@@ -193,18 +282,6 @@
 	        document.addEventListener("mousedown", onMouseDown)
 	        document.addEventListener("mouseup", onMouseUp)
 	    }
-
-        this.disableTweet = function () {
-            var counter = document.querySelector('.twtcounter');
-            counter.classList.add('exceed');
-            document.querySelector('.tweet-button').classList.add('disabled');
-        }
-
-        this.enableTweet = function () {
-            var counter = document.querySelector('.twtcounter');
-            counter.classList.remove('exceed');
-            document.querySelector('.tweet-button').classList.remove('disabled');
-        }
 
         var openTweetPopup = function () {
             var text = document.querySelector('.tweet').value;
@@ -265,38 +342,59 @@
             selector.addSelectionEvent();
         }
 
-        function renderHTML (artist, music, album) {
+        function renderHTML (artist, song, album) {
         	var template = document.querySelector('#lyrics-box-html').innerHTML;
         	var html = Mustache.render(template, {
                 "artist-name": artist.name,
-                "music-name": music.name,
-                "album-name": album && album.name ? album.name + ' \'' + album.year.slice(2) : '',
+                "song-name": song.name,
+                "album-name": (album && album.name) ? (album.name + ' \'' + album.year.slice(2)) : '',
                 "artist-url": artist.url,
-                "pic-url": album && album.picUrl ? album.picUrl : artist.picUrl_medium, // pic_small
-                "youtubeId": music.youtubeId || ''
+                "pic-url": (album && album.picUrl) ? album.picUrl : artist.picURL_medium, // pic_small
+                "youtubeId": song.youtubeId || ''
             });
             document.querySelector(".container.black").innerHTML = html;
-            if (!music.youtubeId)
+            if (!song.youtubeId)
                 document.querySelector('.videoclip').style.display = 'none';
         }
 
+        function disableTweet () {
+            var counter = document.querySelector('.twtcounter');
+            counter.classList.add('exceed');
+            document.querySelector('.tweet-button').classList.add('disabled');
+        }
+
+        function enableTweet () {
+            var counter = document.querySelector('.twtcounter');
+            counter.classList.remove('exceed');
+            document.querySelector('.tweet-button').classList.remove('disabled');
+        }
+
+        function listenToTextarea () {
+	        var tweet = document.querySelector('textarea.tweet');
+	        tweet.addEventListener('focus', updateTweetCounter);
+	        tweet.addEventListener('keyup', updateTweetCounter);
+	        tweet.addEventListener('onchange', updateTweetCounter);
+        }
+        
+        if (VERBOSE)
+        	console.log('data received', data);
+
         var _this = this;
-        var selector = null;
-
-        console.log('received', data)
-
-        renderHTML(data.artist, data.music, data.music.album)
-
-        selector = new Selector()
-        writeLyrics(data.music.lyrics)
-
-        var tweet = document.querySelector('textarea.tweet');
-        tweet.addEventListener('focus', updateTweetCounter);
-        tweet.addEventListener('keyup', updateTweetCounter);
-        tweet.addEventListener('onchange', updateTweetCounter);
+        this.enableTweet = enableTweet;
+        this.disableTweet = disableTweet;
+        renderHTML(data.artist, data.song, data.song.album)
+        listenToTextarea()
+        var selector = Selector()
+        writeLyrics(data.song.lyrics)
     }
 
-    window.ListBox = function (query, data, custom_msg) {
+    window.ListBox = function ListBox (query, data, custom_msg) {
+    	// Where query is an object {String artist, String song} requested to the server
+    	// and data is the object returned.
+
+    	if (!(this instanceof ListBox))
+    		return new ListBox()
+
         function renderHTML (artist, songs) {
         	console.log(artist, songs)
         	var template = document.querySelector('#list-box-html').innerHTML
@@ -314,100 +412,6 @@
         renderHTML(data.artist, data.songs);
     }
 
-    window.SearchBar = function SearchBar () {
-    	// make song ranking available for autoComplete
-
-    	// make sure 'new' keyword is used
-    	if (!(this instanceof SearchBar))
-    		return new SearchBar()
-
-		this.topArtists = null
-		var _this = this;
-
-		function _getTopArtists (callback, onerror) {
-			var monthlyRankURL = "http://www.vagalume.com.br/api/rank.php?\
-				type=art&period=month&limit=300&scope=internacional&period=month"
-			
-			function onData (data) {
-				if (!data.art)
-					return onerror(data)
-				var top = data.art.month.internacional, artists = []
-				for (var i=0; i<top.length; i++)
-					artists.push(top[i].name);
-				callback(artists)
-			}
-
-			$.getJSON(monthlyRankURL, onData, onerror);
-		}
-
-		this.changeTypeahead = function (elem, obj) {
-			if ($(elem).data('typeahead')) {
-				for (var p in obj)
-				if (obj.hasOwnProperty(p))
-					$(elem).data('typeahead')[p] = obj[p]
-			} else {
-				console.log('typeahead didn\'t exist on', elem)
-				$(elem).typeahead(obj)
-			}
-		}
-
-		this.getTopArtists = function (callback, onerror) {
-			function onData (top) {
-				_this.topArtists = top
-				console.log('top artists is now [', top.length, ']', top)
-				callback(top)
-			}
-			function onError (data) {
-				console.debug('deu M...', data)
-				if (typeof onerror !== 'undefined')
-					onerror(data)
-			}
-			if (this.topArtists)
-				callback(this.topArtists)
-			else {
-				
-				// make call vagalume.js?
-				_getTopArtists(onData, onError)
-			}
-		}
-
-		document.querySelector("#search-artist").onfocus = function () {
-			_this.getTopArtists(function (list) {
-				_this.changeTypeahead($("#search-artist"), { source: list });
-			});
-		}
-
-		document.querySelector("#search-music").onfocus = function () {
-			var name = document.querySelector("#search-artist").value;
-			if (!name) {
-				_this.changeTypeahead($("#search-music"), { source: [] });
-			}
-
-			function onData (bool) {
-				function onData (list) {
-					console.log('list of songs for', name, list);
-					_this.changeTypeahead($("#search-music"), { source: list.songs });
-				}
-				if (!bool) { // artist was not found
-					console.log('artist', name, 'not found');
-					_this.changeTypeahead($("#search-artist"), { source: [] });
-					return;
-				}
-
-				vagalume.getArtistSongs(name, onData);				
-			}
-
-			vagalume.artistExists(name, onData);
-		}
-
-		document.querySelector('#searchbar form').onsubmit = function () {
-			var artist = encodeURIComponent(document.querySelector('#search-artist').value);
-			var music = encodeURIComponent(document.querySelector('#search-music').value);
-			window.location.hash = '#!search:' + artist + ':' + music;
-			return false;
-		}
-	}
-
     window.ErrorBox = function (query, data) {
     	// Where query is an object {String artist, String song} requested to the server
     	// and data is the object returned.
@@ -417,7 +421,8 @@
 			document.querySelector(".container.black").innerHTML = html;
     	}
 
-        console.log('query', query, 'data', data);
+    	if (VERRBOSE)
+        	console.log('query', query, 'data', data);
 	
         var template = document.querySelector('#error-box-html').innerHTML;
         if (!data && typeof query === 'string') {
@@ -427,10 +432,10 @@
         		'artist-404': true,
         		'artist-name': query.artist
         	})
-        } else if (!data.music) {
+        } else if (!data.song) {
         	renderHTML({
-        		'music-404': true,
-        		'music-name': query.music,
+        		'song-404': true,
+        		'song-name': query.song,
         		'artist-name': query.artist
         	})
         } else {

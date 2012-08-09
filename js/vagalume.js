@@ -1,9 +1,9 @@
-﻿var vagalume = (function () {
-    
-    var urlmodule = (function () {
-        var forEachKey = (function () {
+﻿var vagalume = (function() {
+
+    var urlmodule = (function() {
+        var forEachKey = (function() {
             if (Object.keys) {
-                return function (obj, fn) {
+                return function(obj, fn) {
                     if (typeof obj === 'object') {
                         var keys = Object.keys(obj);
                         for (var i = 0; i < keys.length; i++)
@@ -11,7 +11,7 @@
                     }
                 };
             }
-            return function (obj, fn) {
+            return function(obj, fn) {
                 if (typeof obj === 'object') {
                     for (var key in obj) {
                         if (obj.hasOwnProperty(key))
@@ -21,82 +21,83 @@
             };
         }());
         return {
-            join: function (obj) {
+            join: function(obj) {
                 var url = obj.url || '';
-                var params = obj.params || {};
+                var params = obj.params || { };
                 var hash = obj.hash || '';
-                
+
                 if (typeof url !== 'string' ||
                     typeof hash !== 'string' ||
                     typeof params !== 'object')
                     return '';
-                    
+
                 if (params.length !== 0) {
-                    var params_url = '';
-                    forEachKey(params, function (k, v) {
-                        if (params_url.length !== 0)
-                            params_url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+                    var paramsUrl = '';
+                    forEachKey(params, function(k, v) {
+                        if (paramsUrl.length !== 0)
+                            paramsUrl += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
                         else
-                            params_url = '?' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+                            paramsUrl = '?' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
                     });
-                    url += params_url;
+                    url += paramsUrl;
                 }
                 if (hash.length !== 0)
                     url += '#' + hash;
-                
+
                 return url;
             },
-            parse: function (url) {
-                var obj = {};
+            parse: function(url) {
+                var obj = { };
                 var params = '';
-                
+
                 if (typeof url !== 'string' || url.length === 0)
                     return obj;
-                    
+
                 url = url.split('#');
                 obj.url = url[0];
                 if (url.length > 1)
                     obj.hash = url.slice(1).join('#');
-                    
+
                 url = obj.url.split('?');
                 obj.url = url[0];
                 if (url.length > 1)
                     params = url.slice(1).join('?');
-                    
+
                 if (params.length === 0)
                     return obj;
-                
+
                 params = params.split('&');
-                obj.params = {};
-                
+                obj.params = { };
+
                 for (var i = 0; i < params.length; i++) {
                     url = params[i].split('=');
                     if (url.length >= 2) {
                         var k = url[0];
                         var v = url.slice(1).join('=');
-                        
+
                         try {
                             k = decodeURIComponent(k);
-                        } catch (e) {
+                        } catch(e) {
                             k = unescape(k);
                         }
                         try {
                             v = decodeURIComponent(v);
-                        } catch (e) {
+                        } catch(e) {
                             v = unescape(v);
                         }
-                        
+
                         if (!obj.params[k] && k.length !== 0 && v.length !== 0)
                             obj.params[k] = v;
                     }
                 }
-                
+
                 return obj;
             },
-        }
+        };
     }());
-    
-    var doQueryCaptcha = function (query, onCaptcha, onData) {
+
+    var doQueryCaptcha = function(query, onCaptcha, onData) {
+
         function onPreData(data) {
             if (!data || !data.captcha) {
                 onData(data);
@@ -104,18 +105,20 @@
             }
 
             var obj = urlmodule.parse(data.url);
-            onCaptcha(data.url, function (input) {
+            onCaptcha(data.url, function(input) {
                 obj.serial = data.serial;
                 obj.udig = input;
                 doQueryCaptcha(urlmodule.join(obj), onCaptcha, onPreData);
             });
         }
+
         $.getJSON(query, onPreData);
     };
 
     return {
-        getMusicListFromArtistUrl: function (artistUrl, onEnd) {
-            function onData (data) {                  
+        getTrackListFromArtistURL: function(artistURL, onEnd) {
+
+            function onData(data) {
                 if (!data || !data.artist || !data.artist.lyrics || !data.artist.lyrics.item) {
                     onEnd([]);
                     return;
@@ -129,140 +132,140 @@
                 }
                 onEnd(musicList);
             }
-            
-            if (typeof artistUrl !== 'string' ||
+
+            if (typeof artistURL !== 'string' ||
                 typeof onEnd !== 'function')
                 return vagalume;
-        
-            if (artistUrl.charAt(artistUrl.length - 1) !== '/')
-                artistUrl += '/';
-                
-            $.getJSON(artistUrl + 'index.js', onData);
-            
+
+            if (artistURL.charAt(artistURL.length - 1) !== '/')
+                artistURL += '/';
+
+            $.getJSON(artistURL + 'index.js', onData);
+
             return vagalume;
         },
-        getMusicIdFromName: function (artistName, musicName, onEnd) {
+        getTrackIdFromName: function(artistName, songName, onEnd) {
+
             function onData(data) {
                 if (!data || !data.type || data.type === 'notfound' || !data.art) {
-                    onEnd({});
+                    onEnd({ });
                     return;
                 }
-                
+
                 var obj = {
                     artist: {
                         name: data.art.id,
                         url: data.art.url,
-                        picUrl_small: data.art.pic_small,
-                        picUrl_medium: data.art.pic_medium,
+                        picURL_small: data.art.pic_small,
+                        picURL_medium: data.art.pic_medium,
                     },
                 };
-                
+
                 if (data.type !== 'exact' || data.mus.length === 0) {
                     onEnd(obj);
                     return;
                 }
-                
-                obj.music = {
+
+                obj.song = {
                     id: data.mus[0].id,
                     name: data.mus[0].name,
                 };
                 onEnd(obj);
             }
-        
-            if (typeof musicName === 'function' && !onEnd) {
-                onEnd = musicName;
-                musicName = '';
-            } else if (!musicName)
-                musicName = '';
-            
+
+            if (typeof songName === 'function' && !onEnd) {
+                onEnd = songName;
+                songName = '';
+            } else if (!songName)
+                songName = '';
+
             if (!artistName ||
                 typeof onEnd !== 'function')
                 return null;
-                
+
             $.getJSON(
                 'http://www.vagalume.com.br/api/search.php?' +
                     'art=' + encodeURIComponent(artistName) +
-                    '&mus=' + encodeURIComponent(musicName) +
+                    '&mus=' + encodeURIComponent(songName) +
                     '&nolyrics&extra=artpic',
                 onData
             );
-                    
+
             return vagalume;
         },
-        getMusicInfoFromName: function (artistName, musicName, onCaptcha, onEnd) {
+        getTrackInfoFromName: function(artistName, songName, onCaptcha, onEnd) {
+
             function onData(data) {
                 if (!data || !data.type || data.type === 'notfound' ||
                     !data.art || !data.mus || data.mus.length <= 0) {
-                    onEnd({});
+                    onEnd({ });
                     return;
                 }
-                
+
                 var obj = {
                     artist: {
                         name: data.art.name,
                         url: data.art.url,
-                        picUrl_small: data.art.pic_small,
-                        picUrl_medium: data.art.pic_medium,
+                        picURL_small: data.art.pic_small,
+                        picURL_medium: data.art.pic_medium,
                     }
-                }
-                
+                };
                 if (data.type !== 'exact') {
                     onEnd(obj);
                     return;
                 }
-                
-                obj.music = {
+
+                obj.song = {
                     name: data.mus[0].name,
                     lyrics: data.mus[0].text,
                     youtubeId: data.mus[0].ytid,
                 };
-                
+
                 if (data.mus[0].alb) {
-                    obj.music.album = {
+                    obj.song.album = {
                         name: data.mus[0].alb.name,
                         year: data.mus[0].alb.year,
-                        picUrl: data.mus[0].alb.img,
+                        picURL: data.mus[0].alb.img,
                     };
                 }
-               
+
                 onEnd(obj);
             }
-            
+
             if (!artistName ||
-                !musicName ||
+                !songName ||
                 typeof onCaptcha !== 'function' ||
                 typeof onEnd !== 'function')
                 return null;
-                
+
             doQueryCaptcha(
                 'http://www.vagalume.com.br/api/search.php?' +
-                'art=' + encodeURIComponent(artistName) +
-                '&mus=' + encodeURIComponent(musicName) +
-                '&extra=alb,ytid,artpic',
+                    'art=' + encodeURIComponent(artistName) +
+                    '&mus=' + encodeURIComponent(songName) +
+                    '&extra=alb,ytid,artpic',
                 onCaptcha,
                 onData
             );
-                    
+
             return vagalume;
         },
-        getMusicInfoFromId: function (musicId, onCaptcha, onEnd) {
+        getTrackInfoFromId: function(musicId, onCaptcha, onEnd) {
+
             function onData(data) {
                 if (!data || !data.type || data.type === 'notfound' ||
                     !data.art || !data.mus || data.mus.length <= 0) {
-                    onEnd({});
+                    onEnd({ });
                     return;
                 }
-                
+
                 var obj = {
                     artist: {
                         name: data.art.name,
                         url: data.art.url,
-                        picUrl_small: data.art.pic_small,
-                        picUrl_medium: data.art.pic_medium,
+                        picURL_small: data.art.pic_small,
+                        picURL_medium: data.art.pic_medium,
                     }
-                }
-                
-                // This shouldn't be possible, but who knows...
+                }; // This shouldn't be possible, but who knows...
                 if (data.type !== 'exact') {
                     onEnd({
                         artist: {
@@ -272,79 +275,79 @@
                     });
                     return;
                 }
-                
-                obj.music = {
+
+                obj.song = {
                     name: data.mus[0].name,
                     lyrics: data.mus[0].text,
                     youtubeId: data.mus[0].ytid,
                 };
-                
+
                 if (data.mus[0].alb) {
-                    obj.music.album = {
+                    obj.song.album = {
                         name: data.mus[0].alb.name,
                         year: data.mus[0].alb.year,
-                        picUrl: data.mus[0].alb.img,
+                        picURL: data.mus[0].alb.img,
                     };
                 }
-               
+
                 onEnd(obj);
             }
-            
+
             if (!musicId ||
                 typeof onCaptcha !== 'function' ||
                 typeof onEnd !== 'function')
                 return null;
-                
+
             doQueryCaptcha(
                 'http://www.vagalume.com.br/api/search.php?' +
-                'musid=' + encodeURIComponent(musicId) +
-                '&extra=alb,ytid,artpic',
+                    'musid=' + encodeURIComponent(musicId) +
+                    '&extra=alb,ytid,artpic',
                 onCaptcha,
                 onData
             );
-                    
+
             return vagalume;
         },
         
         // reciclar tudo daqui para baixo
         // com pontos e vírgulas
-        getMusic: function (artist, music, callback) {
-            function onData (data) {
+        getMusic: function(artist, music, callback) {
+
+            function onData(data) {
                 if (!data || !data.type || data.type === 'notfound' || !data.art) {
-                    callback({});
+                    callback({ });
                     return;
                 }
-                
+
                 var obj = {
                     artist: data.art
                 };
-                
+
                 // Sometimes the vagalume api will return exact cases together with
                 // variation of the songs and data.type will be set to 'approx'.
                 // This is bad! Re-write this to check which song in the list
                 // has the same "raw name" as the requested and notify the user somehow.
                 // Better allow the user to choose between approx songs.
                 if (!data.mus) { // || data.mus.length !== 1) { // data.type !== 'exact'
-                    obj.music = null; // data.mus[0];
+                    obj.song = null; // data.mus[0];
                 } else {
-                    obj.music = {
+                    obj.song = {
                         id: data.mus[0].id,
                         name: data.mus[0].name,
                         lyrics: data.mus[0].text,
-                        vagamule_url: data.mus[0].url 
+                        vagamule_url: data.mus[0].url
                     };
                 }
-                callback(obj)
+                callback(obj);
             }
 
             if (!artist || typeof callback !== 'function')
                 return null;
-            
-            console.log( 'http://www.vagalume.com.br/api/search.php?' +
-                    'art=' + encodeURIComponent(artist) +
-                    '&mus=' + encodeURIComponent(music) +
-                    '&extra=artpic')
 
+            console.log('http://www.vagalume.com.br/api/search.php?' +
+                'art=' + encodeURIComponent(artist) +
+                '&mus=' + encodeURIComponent(music) +
+                '&extra=artpic');
             $.getJSON(
                 'http://www.vagalume.com.br/api/search.php?' +
                     'art=' + encodeURIComponent(artist) +
@@ -352,53 +355,58 @@
                     '&extra=artpic',
                 onData
             );
-                    
-            return null;       
+
+            return null;
         },
-        artistExists: function (artist, callback, onerror) {
+        artistExists: function(artist, callback, onerror) {
             var artist = artist.toLowerCase().trim();
-            var url = "http://www.vagalume.com.br/api/search.php?art="+encodeURIComponent(artist);
-            function onData (data) {
+            var url = "http://www.vagalume.com.br/api/search.php?art=" + encodeURIComponent(artist);
+
+            function onData(data) {
                 if (data.art &&
                     data.art.name.toLowerCase() === artist) { // don't alow close matches!
-                    console.log(artist, data.art.name)
+                    console.log(artist, data.art.name);
                     callback(true);
                 } else
                     callback(false);
             }
+
             $.getJSON(url)
                 .success(onData)
-                    .error(onerror);
+                .error(onerror);
             return vagalume;
         },
-        songExists: function (artist, song, callback, onerror) {
+        songExists: function(artist, song, callback, onerror) {
             // callback(null, data) if artist doesn't exist.
             // callback(false, data) if song didn't match completely
             // callback(true, data) if song matched.
 
-            var url = "http://www.vagalume.com.br/api/search.php?"+
-                      "art="+encodeURIComponent(artist)+
-                      "&mus="+encodeURIComponent(song);
-            function onData (data) {
+            var url = "http://www.vagalume.com.br/api/search.php?" +
+                "art=" + encodeURIComponent(artist) +
+                "&mus=" + encodeURIComponent(song);
+
+            function onData(data) {
                 if (!data.art) // artist doesn't exist
-                    callback(null, data)
+                    callback(null, data);
                 else if (data.type !== 'exact')
-                    callback(false, data)
+                    callback(false, data);
                 else
-                    callback(true, data)
+                    callback(true, data);
             }
+
             $.getJSON(url)
                 .success(onData)
-                    .error(onerror);
+                .error(onerror);
             return vagalume;
         },
         // método interno => tirar do return e colocar lá em cima
-        getRawSongName: function (name) {
-            return String(name).replace(/\s?\(.*$/, '')
+        getRawSongName: function(name) {
+            return String(name).replace(/\s?\(.*$/, '');
         },
         // método interno => tirar do return e colocar lá em cima
-        getArtistURL: function (name, callback) {
-            function onData (data) {
+        getArtistURL: function(name, callback) {
+
+            function onData(data) {
                 if (data.type === 'notfound') {
                     callback(null);
                     return;
@@ -410,32 +418,33 @@
 
                 callback(data.art.url);
             }
-            
+
             var name = name.toLowerCase().trim();
-            var url = "http://www.vagalume.com.br/api/search.php?art="+encodeURIComponent(name);
+            var url = "http://www.vagalume.com.br/api/search.php?art=" + encodeURIComponent(name);
             $.getJSON(url)
                 .success(onData)
-                    .error(onerror);
+                .error(onerror);
         },
-        getArtistSongs: function (artist, callback) {
+        getArtistSongs: function(artist, callback) {
 
-            vagalume.getArtistURL(artist, function (url) {
+            vagalume.getArtistURL(artist, function(url) {
                 if (!url) {
-                    callback({type:'notfound'})
-                    return
+                    callback({ type: 'notfound' });
+                    return;
                 }
-                function inArray (value, array) {
-                    for (var i=0; i<array.length; i++)
+
+                function inArray(value, array) {
+                    for (var i = 0; i < array.length; i++)
                         if (array[i] === value)
                             return true;
                     return false;
                 }
-                
-                function onData (data) {
+
+                function onData(data) {
                     if (!data.artist)
-                        return callback({})
+                        return callback({ });
                     var all = data.artist.lyrics.item, songs = [];
-                    for (var i=0; i<all.length; i++) {
+                    for (var i = 0; i < all.length; i++) {
                         if (!all[i].desc || inArray(vagalume.getRawSongName(all[i].desc), songs))
                             continue;
                         songs.push(vagalume.getRawSongName(all[i].desc));
@@ -457,9 +466,8 @@
                     callback(obj);
                 }
 
-                $.getJSON(url+'/index.js', onData)
-            })
-
+                $.getJSON(url + '/index.js', onData);
+            });
         },
     };
 }());
