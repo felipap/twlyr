@@ -235,6 +235,10 @@ body {
 /***************************** .FACE
 */
 
+.container {
+    text-align: center;
+}
+
 .container.face {
     margin-bottom: 150px;
     margin-top: 200px;
@@ -254,7 +258,7 @@ body {
     border: 1px solid #ccc; rgba(0, 0, 0, .1);
     border-radius: 4px;
 	
-    display: table;
+    display: inline-block;
 	
     margin: 0 auto;
     margin-bottom: 20px;
