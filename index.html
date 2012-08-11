@@ -1,43 +1,37 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>	
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Twlyr - Share a Song!</title>
+<head>
+	<title>Twlyr - Share a Verse!</title>
+	<meta charset='utf-8'>
 
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
-    <link href='main.css' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans|Karla' rel='stylesheet' type='text/css'>
+    <link href="css/bootstrap.css" rel="stylesheet" />
+	<link href='css/main.css' rel='stylesheet' />
+	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans|Karla' rel='stylesheet' type='text/css'>
 
-    <script src="js/jquery.min.js"> </script>
-    <script src="js/bootstrap.min.js"> </script>
-    <script src="js/mustache.js"> </script>
+	<script src='js/jquery.min.js'></script>
+	<script src='js/bootstrap.min.js'></script>
+	<script src='js/mustache.min.js'></script>
 
-    <script src="js/vagalume.js" charset="utf-8"> </script>
-    <script src="js/boxes.js" charset="utf-8"> </script>
+	<script src='js/boxes.js' charset='utf-8'></script>
+	<script src='js/vagalume.js' charset='utf-8'></script>
 </head>
 <body>
 
-    <div class="beta-strip">version 1.0</div>
+	<div class='version-strip'>version 1.0</div>
+	<div class="container face">
+		<a class='twlyr' href=''>Twlyr</a>
+		<h3 class='desc'>share a verse on Twitter!</h3>
+		<form id='searchbar' class='form-search'>
+			<input id='search-artist' type='text' autocomplete='off' placeholder='Choose an artist!' class='input-medium search-query'>
+			<input id='search-song' type='text' autocomplete='off' placeholder='Choose a song!' class='input-medium search-query'>
+			<button type='submit' class='button red'>Search</button>
+		</form>
+		<footer>
+			2012 &reg; created by <a href='http://twitter.com/f03lipe'>f03lipe</a> and <a href='http://twitter.com/gabrielsoldani'>@gabrielsoldani</a>
+		</footer>
+	</div>
 
-    <div class="container">
-        <div class="boing">
-            <div onClick="window.location.replace('')" class="twlyr">Twlyr</div>
-            <h3 class="desc">share a verse on Twitter!</h3>
-	
-            <div id="searchbar">
-                <form class="form-search">
-                    <input type="text" autocomplete="off" placeholder="choose an artist" class="input-medium search-query" id="search-artist">
-                    <input type="text" autocomplete="off" placeholder="choose a song" class="input-medium search-query" id="search-song">
-                    <button type="submit" class="button blue">Search</button>
-                </form>
-            </div>
-            <footer>
-                2012 &reg; created by <a href="http://twitter.com/#!/f03lipe">@f03lipe</a> and <a href="http://twitter.com/#!/gabrielsoldani">@gabrielsoldani</a>
-            </footer>
-        </div>
-    </div>
-
-    <div class="container black"></div> <!-- must stay completely empty -->
+    <div class='container result'></div> <!-- must stay completely empty -->
 
 <script id="lyrics-box-html" type="text/html">
     <div class="box-wrapper">
@@ -49,7 +43,7 @@
             <div class="wrap-left">
                 <div class="music-info-wrapper" style="margin-bottom: 20px">
                     <img onClick="substituteHash(encodeURIComponent('{{artist-name}}'))" src="{{pic-url}}"></img>
-                    <div style="width: 166px">
+                    <div class='text' style="width: 166px">
                         artist: <h3 class="artist-name">{{artist-name}}</h3>
                         song: <h3 class="song-name">{{song-name}}</h3>
                         {{#album-name}}
@@ -64,7 +58,7 @@
 
                     <div class="align-line">
                         <div class="twtcounter">0</div>
-                        <button class="btn btn-success tweet-button" onClick=" openTweetPopup() ">Tweet</button>
+                        <button class="tweet-button button green small" "btn btn-success tweet-button" onClick=" openTweetPopup() ">Tweet</button>
                     </div>
                 </div>
                 <div class="videoclip">
@@ -80,23 +74,22 @@
         <div class="separator"></div>
     </div>
 </script>
-
 <script id="list-box-html" type="text/html">
     <div class="box-wrapper">
 
         <div class="box lyrics-box">
             <div class="msg">
                 {{#msg}}
-                {{{msg}}}
+                	{{{msg}}}
                 {{/msg}}
                 {{^msg}}
-                <h2>Here's a list of songs...</h2> <!-- ' -->
+                	<h2>Here's a list of songs...</h2> <!-- ' -->
                 {{/msg}}
             </div>
             <div class="wrap-left">
                 <div class="music-info-wrapper" style="margin-bottom: 20px">
                     <img src="{{pic-url}}"></img>
-                    <div style="width: 166px">
+                    <div class='text'>
                         artist: <h3>{{artist-name}}</h3>
                         lyrics available: <h3>{{num-lyrics}}</h3>
                     </div>
@@ -119,7 +112,6 @@
         <div class="separsator"></div>
     </div>
 </script>
-
 <script id="error-box-html" type="text/html">
     <div class="box-wrapper">
         <div class="box error-box">
@@ -145,18 +137,18 @@
     </div>
 </script>
 
+
 <script>
 
     SearchBar = new SearchBar();
 
     function selectThisSong(liObj) {
-
         substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
     }
 
 
     function scrollToContent(what) {
-        var p = (what || document.querySelector(".container.black")).offsetTop;
+        var p = (what || document.querySelector(".container.result")).offsetTop;
         $('html, body').animate({ scrollTop: p }, {
                 duration: 1000,
                 step: function (e) {

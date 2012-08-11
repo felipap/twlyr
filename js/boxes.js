@@ -2,6 +2,7 @@
 
 // TODOs:
 // solve compatibility issues for using elm.classList?
+// solve interface issues ASAP AFAP!
 
 // deixe essa ** aqui, lindo ♥.
 String.prototype.trim = String.prototype.trim || function () {
@@ -108,7 +109,7 @@ String.prototype.capitalize = function () {
 			vagalume.artistExists(name, onData);
 		}
 
-		document.querySelector('#searchbar form').onsubmit = function () {
+		document.querySelector('form#searchbar').onsubmit = function () {
 			var artist = encodeURIComponent(document.querySelector('#search-artist').value);
 			var song = encodeURIComponent(document.querySelector('#search-song').value);
 			window.location.hash = '#!search:' + artist + ':' + song;
@@ -167,7 +168,7 @@ String.prototype.capitalize = function () {
 	                , first, last
 
 	            if (ia < ib)
-	            	return worfs.slice(ia, ib+1)
+	            	return words.slice(ia, ib+1)
 	            else if (ia > ib)
 	            	return words.slice(ib, ia+1)
 	            else return [a]
@@ -352,7 +353,7 @@ String.prototype.capitalize = function () {
                 "pic-url": (album && album.picUrl) ? album.picUrl : artist.picURL_medium, // pic_small
                 "youtubeId": song.youtubeId || ''
             });
-            document.querySelector(".container.black").innerHTML = html;
+            document.querySelector(".container.result").innerHTML = html;
             if (!song.youtubeId)
                 document.querySelector('.videoclip').style.display = 'none';
         }
@@ -406,7 +407,7 @@ String.prototype.capitalize = function () {
 	        		"num-lyrics": songs.length,
 	        		"msg": custom_msg,
 	        	})
-            document.querySelector(".container.black").innerHTML = html;
+            document.querySelector(".container.result").innerHTML = html;
         }
 
         renderHTML(data.artist, data.songs);
@@ -418,7 +419,7 @@ String.prototype.capitalize = function () {
     
     	function renderHTML (obj) {
     		var html = Mustache.render(template, obj)
-			document.querySelector(".container.black").innerHTML = html;
+			document.querySelector(".container.result").innerHTML = html;
     	}
 
     	if (VERRBOSE)
