@@ -275,6 +275,10 @@ body {
     border-color: #08C;
 }
 
+.dropdown-menu li {
+    font-family: 'Open Sans';
+}
+
 /**************************************************/
 /***************************** FOOTER
 */
