@@ -342,6 +342,7 @@ footer a:visited {
 .container.result h2,
 .container.result h3 {
     color: white;
+    font-family: Karla;
     text-shadow: 0 0 3px #333;
 }
 
@@ -349,6 +350,7 @@ footer a:visited {
 .container.result h5,
 .container.result h6 {
     color: white;
+    font-family: Karla;
     text-shadow: none;
 }
 
