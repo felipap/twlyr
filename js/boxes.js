@@ -125,10 +125,13 @@ String.prototype.capitalize = function () {
 			}
 		})
 
+		$(window).bind('hashchange', function() {
+			decideOnHash();
+		});
+
 		var h = parseHash();
 		updateForm(h);
 		decideOnHash();
-
 	}
 
 	window.SearchBar = function SearchBar () {

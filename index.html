@@ -4,7 +4,7 @@
 	<title>Twlyr - Share a Verse!</title>
 	<meta charset='utf-8'>
 
-    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href='css/bootstrap.css' rel='stylesheet' />
 	<link href='css/main.css' rel='stylesheet' />
 	<link href='http://fonts.googleapis.com/css?family=Berkshire+Swash|Courgette|Open+Sans|Karla' rel='stylesheet' type='text/css'>
 
@@ -18,7 +18,7 @@
 <body>
 
 	<div class='version-strip'>version 1.0</div>
-	<div class="container face">
+	<div class='container face'>
 		<a class='twlyr' href=''>Twlyr</a>
 		<h3 class='desc'>share a verse on Twitter!</h3>
 		<form id='searchbar' class='form-search'>
@@ -33,41 +33,41 @@
 
     <div class='container result'></div> <!-- must stay completely empty -->
 
-<script id="lyrics-box-html" type="text/html">
-    <div class="box-wrapper">
+<script id='lyrics-box-html' type='text/html'>
+    <div class='box-wrapper'>
 
-        <div class="box lyrics-box">
-            <div class="msg">
+        <div class='box lyrics-box'>
+            <div class='msg'>
                 <h2>Hey, we've found something!</h2> <!-- ' -->
             </div>
-            <div class="wrap-left">
-                <div class="music-info-wrapper" style="margin-bottom: 20px">
-                    <img onClick="substituteHash(encodeURIComponent('{{artist-name}}'))" src="{{pic-url}}"></img>
-                    <div class='text' style="width: 166px">
-                        artist: <h3 class="artist-name">{{artist-name}}</h3>
-                        song: <h3 class="song-name">{{song-name}}</h3>
+            <div class='wrap-left'>
+                <div class='music-info-wrapper' style='margin-bottom: 20px'>
+                    <img onClick='substituteHash(encodeURIComponent(\'{{artist-name}}\'))' src='{{pic-url}}'></img>
+                    <div class='text' style='width: 166px'>
+                        artist: <h3 class='artist-name'>{{artist-name}}</h3>
+                        song: <h3 class='song-name'>{{song-name}}</h3>
                         {{#album-name}}
-                        from album<h3 class="album-name">{{album-name}}</h3>
+                        from album<h3 class='album-name'>{{album-name}}</h3>
                         {{/album-name}}
                     </div>
                 </div>
 
 
-                <div class="tweet-box">
-                    <textarea class="tweet" placeholder="select the lyrics on the right to tweet..."></textarea>
+                <div class='tweet-box'>
+                    <textarea class='tweet' placeholder='select the lyrics on the right to tweet...'></textarea>
 
-                    <div class="align-line">
-                        <div class="twtcounter">0</div>
-                        <button class="tweet-button button green small" "btn btn-success tweet-button" onClick=" openTweetPopup() ">Tweet</button>
+                    <div class='align-line'>
+                        <div class='twtcounter'>0</div>
+                        <button class='tweet-button button green small' 'btn btn-success tweet-button' onClick=' openTweetPopup() '>Tweet</button>
                     </div>
                 </div>
-                <div class="videoclip">
-                    <iframe width="380" height="214" src="http://www.youtube.com/embed/{{youtubeId}}" frameborder="0" allowfullscreen></iframe>
+                <div class='videoclip'>
+                    <iframe width='380' height='214' src='http://www.youtube.com/embed/{{youtubeId}}' frameborder='0' allowfullscreen></iframe>
                 </div>
             </div>
-            <div class="wrap-right">
+            <div class='wrap-right'>
                 <h5>{{artist-name}}'s {{song-name}} lyrics:</h5> <!--' -->
-                <div class="lyrics"></div>
+                <div class='lyrics'></div>
             </div>
         </div>
 
