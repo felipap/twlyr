@@ -27,7 +27,7 @@ String.prototype.capitalize = function () {
 
 	window.loadEngine = function () {
 
-		function decideOnHash() {
+		window.decideOnHash = function () {
 			// Decide what to do, based hashObj {String artist, String song}
 			var hashObj = parseHash();
 			if (!hashObj.artist && !hashObj.song) {
@@ -46,7 +46,7 @@ String.prototype.capitalize = function () {
 			}
 		}
 
-		function substituteHash(newhash) {
+		window.substituteHash = function (newhash) {
 			newhash = "#!" + newhash.replace(/^#\!?/, '');
 			location.hash = newhash;
 			decideOnHash();
