@@ -70,6 +70,7 @@ String.prototype.capitalize = function () {
 		}
 
 		function updateForm(hashObj) {
+			var hashObj = hashObj || parseHash();
 			document.querySelector("#search-artist").value = hashObj.artist;
 			document.querySelector("#search-song").value = hashObj.song;
 		}
@@ -128,6 +129,7 @@ String.prototype.capitalize = function () {
 
 		window.addEventListener('hashchange', function() {
 			decideOnHash();
+			updateForm();
 		});
 
 		var h = parseHash();
