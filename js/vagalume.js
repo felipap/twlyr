@@ -196,8 +196,7 @@
         getTrackInfoFromName: function(artistName, songName, onCaptcha, onEnd) {
 
             function onData(data) {
-                if (!data || !data.type || data.type === 'notfound' ||
-                    !data.art || !data.mus || data.mus.length <= 0) {
+                if (!data || !data.art || !data.type || data.type === 'notfound') { // data.mus.length <= 0) {
                     onEnd({ });
                     return;
                 }
@@ -210,7 +209,7 @@
                         picURL_medium: data.art.pic_medium,
                     }
                 };
-                if (data.type !== 'exact') {
+                if (data.type !== 'exact' || !data.mus) {
                     onEnd(obj);
                     return;
                 }

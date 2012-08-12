@@ -91,6 +91,7 @@ String.prototype.capitalize = function () {
 			}, function(data) {
 				var box;
 				if (!data.artist) {
+					console.log("here", data)
 					box = new ErrorBox({ artist: artist, song: song }, data);
 				} else if (!data.song) {
 					var html = "<h2>We couldn't find {{song}}</h2><h3>But here's a list of songs by {{artist}}</h3>";
@@ -125,7 +126,7 @@ String.prototype.capitalize = function () {
 			}
 		})
 
-		$(window).bind('hashchange', function() {
+		window.addEventListener('hashchange', function() {
 			decideOnHash();
 		});
 
@@ -531,7 +532,7 @@ String.prototype.capitalize = function () {
 			document.querySelector(".container.result").innerHTML = html;
 		}
 
-		if (VERRBOSE)
+		if (VERBOSE)
 			console.log('query', query, 'data', data);
 	
 		var template = document.querySelector('#error-box-html').innerHTML;
