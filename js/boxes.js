@@ -54,7 +54,7 @@ String.prototype.capitalize = function () {
 			// 	history.pushState({module:"leave"}, document.title, this.href);
 		}
 
-		window.selectThisSong(liObj) {
+		window.selectThisSong = function (liObj) {
 
 			substituteHash(encodeURIComponent(liObj.dataset.artist) + ":" + encodeURIComponent(liObj.dataset.song));
 		}
