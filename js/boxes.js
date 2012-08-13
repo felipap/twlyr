@@ -396,7 +396,7 @@ String.prototype.capitalize = function () {
 			document.addEventListener("mouseup", onMouseUp)
 		}
 
-		var openTweetPopup = function () {
+		window.openTweetPopup = function () {
 			var text = document.querySelector('.tweet').value;
 			window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
 		}
