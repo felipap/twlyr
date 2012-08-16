@@ -293,20 +293,26 @@ String.prototype.capitalize = function () {
 				return [hoverWord, endWord]
 			}
 
-			this.updateTweetBox = function () {
-				if (!hoverWord || !endWord) // unselection process: clear tweet and return
-					var tweet = ''
-				else {
+			this.clearTweetBox = function () {
+				document.querySelector('textarea.tweet').value = '';
+				updateTweetCounter()				
+			}
+
+			this.updateTweetBox = function (text) {
+				if (!hoverWord || !endWord) { // updating tweet with new selector
+					var words = Array.prototype.slice.call(document.querySelectorAll('.word.selected'))
+					var lines = _this.getSplitRange.call(null, words[0], words[words.length-1])
+				} else
 					var lines = _this.getSplitRange.apply(null, _this.getSelectionEnds())
-						, lpieces = []
-					for (var i = 0; i < lines.length; i++) {
-						var wpieces = []
-						for (var j = 0; j < lines[i].length; j++)
-							wpieces.push(lines[i][j].innerHTML.removePunctuation())
-						lpieces.push(wpieces.join(' '))
-					}
-					var tweet = lpieces.join(" ♪ ") // ♪ ♫ ♩ ♬ ♭ ♮ ♯ /
+				var lpieces = []
+				for (var i = 0; i < lines.length; i++) {
+					var wpieces = []
+					for (var j = 0; j < lines[i].length; j++)
+						wpieces.push(lines[i][j].innerHTML.removePunctuation())
+					lpieces.push(wpieces.join(' '))
 				}
+				var sep = document.querySelector('.customize-tweet').dataset.separator;
+				var tweet = lpieces.join(" "+sep+" ") // ♪ ♫ ♩ ♬ ♭ ♮ ♯ /
 				document.querySelector('textarea.tweet').value = tweet
 				updateTweetCounter()
 			}
@@ -383,7 +389,7 @@ String.prototype.capitalize = function () {
 						if (selected[0] === lastSelected) { // Same word was selected last time: unselect it!
 							_this.unselectWords()
 							endWord = lastSelected = null // Allow for selection next time.
-							_this.updateTweetBox()
+							_this.clearTweetBox()
 							return
 						} else
 							lastSelected = selected[0]
@@ -455,21 +461,6 @@ String.prototype.capitalize = function () {
 			selector.addSelectionEvent();
 		}
 
-		function renderHTML (artist, song, album) {
-			var template = document.querySelector('#lyrics-box-html').innerHTML;
-			var html = Mustache.render(template, {
-				"artist-name": artist.name,
-				"song-name": song.name,
-				"album-name": (album && album.name) ? (album.name + ' \'' + album.year.slice(2)) : '',
-				"artist-url": artist.url,
-				"pic-url": (album && album.picUrl) ? album.picUrl : artist.picURL_medium, // pic_small
-				"youtubeId": song.youtubeId || ''
-			});
-			document.querySelector(".container.result").innerHTML = html;
-			if (!song.youtubeId)
-				document.querySelector('.videoclip').style.display = 'none';
-		}
-
 		function disableTweet () {
 			var counter = document.querySelector('.twtcounter');
 			counter.classList.add('exceed');
@@ -488,7 +479,33 @@ String.prototype.capitalize = function () {
 			tweet.addEventListener('keyup', updateTweetCounter);
 			tweet.addEventListener('onchange', updateTweetCounter);
 		}
-		
+
+		function listenToSeparatorChange () {
+			var sepBut = document.querySelectorAll('.customize-tweet .separators button');
+			for (var i=0; i<sepBut.length; i++) {
+				console.log(sepBut[i]);
+				sepBut[i].addEventListener('click', function (event) {
+					if (VERBOSE)
+						console.log('sepator selected', event.target.innerHTML);
+					document.querySelector('.customize-tweet').dataset.separator = event.target.innerHTML;
+					selector.updateTweetBox();
+				})
+			}
+		}
+
+		function renderHTML (artist, song, album) {
+			var template = document.querySelector('#lyrics-box-html').innerHTML;
+			var html = Mustache.render(template, {
+				"artist-name": artist.name,
+				"song-name": song.name,
+				"album-name": (album && album.name) ? (album.name + ' \'' + album.year.slice(2)) : '',
+				"artist-url": artist.url,
+				"pic-url": (album && album.picUrl) ? album.picUrl : artist.picURL_medium, // pic_small
+				"youtubeId": song.youtubeId || ''
+			});
+			document.querySelector(".container.result").innerHTML = html;
+		}
+
 		if (VERBOSE)
 			console.log('data received', data);
 
@@ -497,7 +514,8 @@ String.prototype.capitalize = function () {
 		this.disableTweet = disableTweet;
 		renderHTML(data.artist, data.song, data.song.album)
 		listenToTextarea()
-		var selector = Selector()
+		listenToSeparatorChange()
+		window.selector = Selector()
 		writeLyrics(data.song.lyrics)
 	}
 
