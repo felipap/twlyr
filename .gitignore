@@ -10,3 +10,14 @@ Desktop.ini
 
 # Linux
 *.swp
+
+# Visual Studio
+*.csproj
+*.csproj.user
+*.sln
+*.suo
+*.config
+[Bb]in/
+obj/
+Properties/
+_ReSharper*/
