@@ -116,7 +116,7 @@ String.prototype.capitalize = function () {
 		document.querySelector("form.form-search").onsubmit = function () {
 			var artist = document.querySelector("#search-artist").value.toLowerCase().trim(),
 				song = document.querySelector("#search-song").value.toLowerCase().trim();
-			if (artist && song)
+			if (artist)
 				substituteHash("#!" + encodeURIComponent(artist) + ":" + encodeURIComponent(song));
 			return false;
 		};
