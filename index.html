@@ -70,7 +70,7 @@
 
                     <div class='align-line'>
                         <div class='twtcounter'>0</div>
-                        <button class='tweet-button button green small' 'btn btn-success tweet-button' onClick='openTweetPopup()'>Tweet</button>
+                        <button class='tweet-button button green small disabled' onClick='openTweetPopup()'>Tweet</button>
                     </div>
                 </div>
 
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="add-via-twlyr">
+                    <div class="option add-via-twlyr">
                         <label>Add "via @twlyr" at the end of tweet</label>
                         <button onClick="this.classList.toggle('active');
                                          if (this.classList.contains('active')) {
@@ -108,9 +108,10 @@
                                          selector.updateTweetBox();
                                          " class="button green small active">YES! :)</button>
                     </div>
+                    <!--
                     <hr>
-                    <div class="remove-brackets">
-                        <label>Ignore everything within brackets</label>
+                    <div class="option remove-brackets">
+                        <label>Ignore words within brackets</label>
                         <button onClick="this.classList.toggle('active');
                                          if (this.classList.contains('active')) {
                                             this.classList.remove('red');
@@ -122,7 +123,24 @@
                                             this.innerHTML = 'No';
                                          }
                                          selector.updateTweetBox();
-                                         " class="button green small active">Yes</button>
+                                         " class="button red small">No</button>
+                    </div>
+                    -->
+                    <hr>
+                    <div class="option make-lowercase">
+                        <label>Make all words lowercase</label>
+                        <button onClick="this.classList.toggle('active');
+                                         if (this.classList.contains('active')) {
+                                            this.classList.remove('red');
+                                            this.classList.add('green');
+                                            this.innerHTML = 'Yes';
+                                         } else {
+                                            this.classList.add('red');
+                                            this.classList.remove('green');
+                                            this.innerHTML = 'No';
+                                         }
+                                         selector.updateTweetBox();
+                                         " class="button red small">No</button>
                     </div>
 				</form>
                 {{#youtubeId}}

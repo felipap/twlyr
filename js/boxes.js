@@ -306,17 +306,6 @@ String.prototype.capitalize = function () {
 			}
 
 			this.updateTweetBox = function (text) {
-				function addViaTwlyr (text) {
-					if (document.querySelector('.add-via-twlyr .button.active')
-						&& 140-text.length > ' (via @twlyr)'.length)
-						return text+' (via @twlyr)'
-					return text
-				}
-				function removeBrackets (text) {
-					if (document.querySelector('.remove-brackets .button.active'))
-						return text.replace(/\(.*\)/, "").replace(/\[.*\]/, "").replace(/\{.*\}/, "");
-					return text;
-				}
 
 				if (!hoverWord || !endWord) { // updating tweet with new selector
 					var words = Array.prototype.slice.call(document.querySelectorAll('.word.selected'))
@@ -330,10 +319,29 @@ String.prototype.capitalize = function () {
 						wpieces.push(lines[i][j].innerHTML.removePunctuation())
 					lpieces.push(wpieces.join(' '))
 				}
-				var sep, tweet;
 
+				function makeAllLower (sep) {
+					if (document.querySelector('.make-lowercase .button.active')) {
+						var n = []
+						for (var i=0; i<sep.length; i++)
+							n.push(sep[i].toLowerCase())
+						return n
+					}
+					return sep;
+				}
+
+				function removeBrackets (sp) {
+					if (document.querySelector('.remove-brackets .button.active')) {
+						var n = [];
+
+						return text.replace(/\(.*\)/, "").replace(/\[.*\]/, "").replace(/\{.*\}/, "");
+					}
+					return sp;
+				}
+
+				var sep, tweet;
 				sep = document.querySelector('.customize-tweet').dataset.separator
-				tweet = addViaTwlyr(removeBrackets(lpieces.join(" "+sep+" ")))
+				tweet = removeBrackets(makeAllLower(lpieces)).join(" "+sep+" ")
 				document.querySelector('textarea.tweet').value = tweet
 				updateTweetCounter()
 			}
@@ -369,7 +377,7 @@ String.prototype.capitalize = function () {
 				}
 			}
 
-			// everybody ♥ closures!
+			// everybody ♥ closures
 			var _this = this
 				, mouseDown = false // mouse starts unclicked
 				, endWord = null // the first word of a selection process, default to null
@@ -424,7 +432,12 @@ String.prototype.capitalize = function () {
 		}
 
 		window.openTweetPopup = function () {
+			if (document.querySelector('.tweet-button.disabled'))
+				return
 			var text = document.querySelector('.tweet').value;
+			if (document.querySelector('.add-via-twlyr .button.active')
+					&& 140-text.length > ' (via @twlyr)'.length)
+				text += ' (via @twlyr)'
 			window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text));
 		}
 
@@ -434,7 +447,7 @@ String.prototype.capitalize = function () {
 			var counter = document.querySelector('.twtcounter');
 			
 			counter.innerHTML = tweet.length;
-			if (tweet.length > 140)
+			if (tweet.length < 1 || tweet.length > 140)
 				_this.disableTweet();
 			else _this.enableTweet();
 			
@@ -484,14 +497,17 @@ String.prototype.capitalize = function () {
 
 		function disableTweet () {
 			var counter = document.querySelector('.twtcounter');
-			counter.classList.add('exceed');
+			if (document.querySelector('.tweet').value.length !== 0)
+				counter.classList.add('exceed');
 			document.querySelector('.tweet-button').classList.add('disabled');
+			document.querySelector('.tweet-button').onclick = null
 		}
 
 		function enableTweet () {
 			var counter = document.querySelector('.twtcounter');
 			counter.classList.remove('exceed');
 			document.querySelector('.tweet-button').classList.remove('disabled');
+			document.querySelector('.tweet-button').onclick = openTweetPopup;
 		}
 
 		function listenToTextarea () {
