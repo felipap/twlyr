@@ -224,7 +224,7 @@ body {
 	user-select: none;
 }
 
-a.twlyr:focus,
+a.twlyr:focus,r 
 a.twlyr:active {
 	outline: none;
 	border: none;
@@ -400,21 +400,37 @@ footer a:visited {
 
 form.customize-tweet {
 	display: table;
-	background: whiteSmoke;
+	sbackground: whiteSmoke;
 	border-radius: 5px;
 	box-shadow: 0 0 10px #333;
+	border: 1px dashed whiteSmoke;
 	width: 100%;
-	padding: 10px 15px;
+	padding: 15px;
+	color: white;
 }
 
 form.customize-tweet label {
-	float: left;
-	font: 15px/28px Karla;
-	margin: 0 10px 0 0;
+	font: bold 15px Karla;
+	margin-bottom: 10px;
+}
+
+form.customize-tweet label span {
+	font-size: 14px;
+}
+
+.separators {
 }
 
 form.customize-tweet .btn-group {
-	float: right;
+}
+
+form.customize-tweet input[type=text] {
+	box-shadow: none;
+	width: 25px;
+	background: white;
+	margin: 0;
+	text-align: left;
+	vertical-align: middle;
 }
 
 .videoclip {

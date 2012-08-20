@@ -63,8 +63,9 @@
                 </div>
 
 				<form onSubmit="return false;" class="customize-tweet" data-separator="♪">
-                    <label>Verse Separator</label>
+                    <label>Choose a Verse Separator <span>(or write your own)</span></label>
                     <div class="btn-group separators" data-toggle="buttons-radio">
+                        <button class="btn"></button>
                         <button class="btn active">♪</button>
                         <button class="btn">♫</button>
                         <button class="btn">♩</button>
@@ -72,9 +73,13 @@
                         <button class="btn">♭</button>
                         <button class="btn">♮</button>
                         <button class="btn">♯</button>
+                        <button class="btn">&hearts;</button>
+                        <button class="btn">♡</button>
                         <button class="btn">&#47;</button>
+                        <input class="btn" type="text" />
                     </div>
-					<!-- ♪ ♫ ♩ ♬ ♭ ♮ ♯ -->
+                    <hr>
+                    <h5>oi</h5>
 				</form>
                 {{#youtubeId}}
                 <div class='videoclip'>

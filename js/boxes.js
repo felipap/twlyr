@@ -481,13 +481,17 @@ String.prototype.capitalize = function () {
 		}
 
 		function listenToSeparatorChange () {
-			var sepBut = document.querySelectorAll('.customize-tweet .separators button');
+			var sepBut = document.querySelectorAll('.customize-tweet .separators .btn'); // the input is also a .btn
 			for (var i=0; i<sepBut.length; i++) {
-				console.log(sepBut[i]);
 				sepBut[i].addEventListener('click', function (event) {
 					if (VERBOSE)
-						console.log('sepator selected', event.target.innerHTML);
-					document.querySelector('.customize-tweet').dataset.separator = event.target.innerHTML;
+						console.log('separator selected', event.target);
+					if (event.target.tagName === 'INPUT') { // custom separator
+						document.querySelector('.customize-tweet').dataset.separator = event.target.value;
+						console.log('oi', event.target)
+					}
+					else
+						document.querySelector('.customize-tweet').dataset.separator = event.target.innerHTML;
 					selector.updateTweetBox();
 				})
 			}
