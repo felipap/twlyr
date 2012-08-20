@@ -75,23 +75,55 @@
                 </div>
 
 				<form onSubmit="return false;" class="customize-tweet" data-separator="♪">
-                    <label>Choose a Verse Separator <span>(or write your own)</span></label>
-                    <div class="btn-group separators" data-toggle="buttons-radio">
-                        <button class="btn"></button>
-                        <button class="btn active">♪</button>
-                        <button class="btn">♫</button>
-                        <button class="btn">♩</button>
-                        <button class="btn">♬</button>
-                        <button class="btn">♭</button>
-                        <button class="btn">♮</button>
-                        <button class="btn">♯</button>
-                        <button class="btn">&hearts;</button>
-                        <button class="btn">♡</button>
-                        <button class="btn">&#47;</button>
-                        <input class="btn" type="text" />
+                    <div class="select-separators">
+                        <label>Choose a Verse Separator</label>
+                        <div class="btn-group separators" data-toggle="buttons-radio">
+                            <button style="width: 25px" class="btn"></button>
+                            <button class="btn active">♪</button>
+                            <button class="btn">,</button>
+                            <button class="btn">♫</button>
+                            <button class="btn">♩</button>
+                            <button class="btn">♬</button>
+                            <button class="btn">♭</button>
+                            <button class="btn">♮</button>
+                            <button class="btn">♯</button>
+                            <button class="btn">&hearts;</button>
+                            <button class="btn">♡</button>
+                            <button class="btn">&#47;</button>
+                        </div>
                     </div>
                     <hr>
-                    <h5>oi</h5>
+                    <div class="add-via-twlyr">
+                        <label>Add "via @twlyr" at the end of tweet</label>
+                        <button onClick="this.classList.toggle('active');
+                                         if (this.classList.contains('active')) {
+                                            this.classList.remove('red');
+                                            this.classList.add('green');
+                                            this.innerHTML = 'YES! :)';
+                                         } else {
+                                            this.classList.add('red');
+                                            this.classList.remove('green');
+                                            this.innerHTML = 'No! :(';
+                                         };
+                                         selector.updateTweetBox();
+                                         " class="button green small active">YES! :)</button>
+                    </div>
+                    <hr>
+                    <div class="remove-brackets">
+                        <label>Ignore everything within brackets</label>
+                        <button onClick="this.classList.toggle('active');
+                                         if (this.classList.contains('active')) {
+                                            this.classList.remove('red');
+                                            this.classList.add('green');
+                                            this.innerHTML = 'Yes';
+                                         } else {
+                                            this.classList.add('red');
+                                            this.classList.remove('green');
+                                            this.innerHTML = 'No';
+                                         }
+                                         selector.updateTweetBox();
+                                         " class="button green small active">Yes</button>
+                    </div>
 				</form>
                 {{#youtubeId}}
                 <div class='videoclip'>

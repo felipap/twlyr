@@ -380,6 +380,7 @@ footer a:visited {
 .box {
 	display: table;
 }
+
 /**************************************************/
 /***************************** .WRAPPER-LEFT
 */
@@ -398,41 +399,6 @@ footer a:visited {
 	vertical-align: top;
 }
 
-form.customize-tweet {
-	display: table;
-	sbackground: whiteSmoke;
-	border-radius: 5px;
-	box-shadow: 0 0 10px #333;
-	border: 1px dashed whiteSmoke;
-	width: 100%;
-	padding: 15px;
-	color: white;
-}
-
-form.customize-tweet label {
-	font: bold 15px Karla;
-	margin-bottom: 10px;
-}
-
-form.customize-tweet label span {
-	font-size: 14px;
-}
-
-.separators {
-}
-
-form.customize-tweet .btn-group {
-}
-
-form.customize-tweet input[type=text] {
-	box-shadow: none;
-	width: 25px;
-	background: white;
-	margin: 0;
-	text-align: left;
-	vertical-align: middle;
-}
-
 .videoclip {
 	margin-top: 20px;
 }
@@ -440,6 +406,54 @@ form.customize-tweet input[type=text] {
 
 .wrap-left h3 {
 	margin-bottom: 10px;
+}
+
+
+/*****
+****** FORM.CUSTOMIZE-TWEET
+*****/
+
+form.customize-tweet {
+	display: table;
+	sbackground: whiteSmoke;
+	border-radius: 5px;
+	sbox-shadow: 0 0 10px #333;
+	border: 1px dashed whiteSmoke;
+	width: 100%;
+	padding: 15px;
+	color: white;
+}
+
+form.customize-tweet .select-separators label {
+	font: bold 14px Karla;
+	margin-bottom: 10px;
+}
+
+form.customize-tweet hr {
+	border: 0;
+	height: 0px;
+	border-top: 1px dashed white;
+}
+
+form.customize-tweet .add-via-twlyr,
+form.customize-tweet .remove-brackets {
+	display: block;
+	height: 30px;
+}
+
+form.customize-tweet .add-via-twlyr label,
+form.customize-tweet .remove-brackets label {
+	display: inline-block;
+	font: bold 14px/25px Karla;
+	vertical-align: middle;
+}
+
+form.customize-tweet .add-via-twlyr button,
+form.customize-tweet .remove-brackets button {
+	vertical-align: middle;
+	font: bold ;
+	float: right;
+	text-transform: none;
 }
 
 /*****

@@ -249,8 +249,15 @@ String.prototype.capitalize = function () {
 			this.selectRange = function (a, b) {
 				// Make selection starting at A and ending at B.
 				var w = _this.getRange(a, b)
-				for (var i = 0; i< w.length; i++)
+				for (var i = 0; i< w.length; i++) {
+					/*
+					if (w[i].innerHTML.match(/^\(/)) {
+						while (!w[i++].innerHTML.match(/\)$/))
+							;
+					}
+					*/
 					w[i].classList.add('selected')
+				}
 				if (w.length == 0)
 					throw Error('no range selected!')
 			}
@@ -299,6 +306,18 @@ String.prototype.capitalize = function () {
 			}
 
 			this.updateTweetBox = function (text) {
+				function addViaTwlyr (text) {
+					if (document.querySelector('.add-via-twlyr .button.active')
+						&& 140-text.length > ' (via @twlyr)'.length)
+						return text+' (via @twlyr)'
+					return text
+				}
+				function removeBrackets (text) {
+					if (document.querySelector('.remove-brackets .button.active'))
+						return text.replace(/\(.*\)/, "").replace(/\[.*\]/, "").replace(/\{.*\}/, "");
+					return text;
+				}
+
 				if (!hoverWord || !endWord) { // updating tweet with new selector
 					var words = Array.prototype.slice.call(document.querySelectorAll('.word.selected'))
 					var lines = _this.getSplitRange.call(null, words[0], words[words.length-1])
@@ -311,8 +330,10 @@ String.prototype.capitalize = function () {
 						wpieces.push(lines[i][j].innerHTML.removePunctuation())
 					lpieces.push(wpieces.join(' '))
 				}
-				var sep = document.querySelector('.customize-tweet').dataset.separator;
-				var tweet = lpieces.join(" "+sep+" ") // ♪ ♫ ♩ ♬ ♭ ♮ ♯ /
+				var sep, tweet;
+
+				sep = document.querySelector('.customize-tweet').dataset.separator
+				tweet = addViaTwlyr(removeBrackets(lpieces.join(" "+sep+" ")))
 				document.querySelector('textarea.tweet').value = tweet
 				updateTweetCounter()
 			}
@@ -481,17 +502,12 @@ String.prototype.capitalize = function () {
 		}
 
 		function listenToSeparatorChange () {
-			var sepBut = document.querySelectorAll('.customize-tweet .separators .btn'); // the input is also a .btn
+			var sepBut = document.querySelectorAll('.customize-tweet .separators button');
 			for (var i=0; i<sepBut.length; i++) {
 				sepBut[i].addEventListener('click', function (event) {
 					if (VERBOSE)
 						console.log('separator selected', event.target);
-					if (event.target.tagName === 'INPUT') { // custom separator
-						document.querySelector('.customize-tweet').dataset.separator = event.target.value;
-						console.log('oi', event.target)
-					}
-					else
-						document.querySelector('.customize-tweet').dataset.separator = event.target.innerHTML;
+					document.querySelector('.customize-tweet').dataset.separator = event.target.innerHTML;
 					selector.updateTweetBox();
 				})
 			}
