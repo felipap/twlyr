@@ -232,18 +232,24 @@ body {
 
 .twlyr, a.twlyr {
 	display: block;
+    margin: 0 auto;
 	margin-bottom: 10px;
 	cursor: pointer;
 
-	text-decoration: none !important;
-	color: #00C6F0 !important;
-	font: bold 100px/100px "Berkshire Swash", "Open Sans";
-	text-align: center;
+    background-image: url("../images/twlyr.png");
+    background-repeat: no-repeat;
+
+    width: 245px;
+    height: 100px;
 	
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+.twlyr span {
+    display: none;
 }
 
 a.twlyr:focus,r 
