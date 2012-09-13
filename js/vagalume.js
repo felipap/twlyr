@@ -1,5 +1,7 @@
 ﻿var vagalume = (function() {
 
+    var VERBOSE = false;
+
     var urlmodule = (function() {
         var forEachKey = (function() {
             if (Object.keys) {
@@ -342,11 +344,11 @@
 
             if (!artist || typeof callback !== 'function')
                 return null;
-
-            console.log('http://www.vagalume.com.br/api/search.php?' +
-                'art=' + encodeURIComponent(artist) +
-                '&mus=' + encodeURIComponent(music) +
-                '&extra=artpic');
+            if (VERBOSE)
+                console.log('http://www.vagalume.com.br/api/search.php?' +
+                    'art=' + encodeURIComponent(artist) +
+                    '&mus=' + encodeURIComponent(music) +
+                    '&extra=artpic');
             $.getJSON(
                 'http://www.vagalume.com.br/api/search.php?' +
                     'art=' + encodeURIComponent(artist) +
@@ -364,10 +366,11 @@
             function onData(data) {
                 if (data.art &&
                     data.art.name.toLowerCase() === artist) { // don't alow close matches!
-                    console.log(artist, data.art.name);
-                    callback(true);
+                    if (VERBOSE)
+                        console.log(artist, data.art.name);
+                    callback(true, data);
                 } else
-                    callback(false);
+                    callback(false, data);
             }
 
             $.getJSON(url)
@@ -439,7 +442,7 @@
                     return false;
                 }
 
-                function onData(data) {
+                function onData (data) {
                     if (!data.artist)
                         return callback({ });
                     var all = data.artist.lyrics.item, songs = [];

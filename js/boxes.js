@@ -2,7 +2,7 @@
 
 // TODOs:
 // solve compatibility issues for using elm.classList?
-// solve function interface issues ASAP AFAP!
+// solve functions interface issues ASAP AFAP!
 
 // deixe essa ** aqui, lindo ♥.
 String.prototype.trim = String.prototype.trim || function () {
@@ -92,7 +92,8 @@ String.prototype.capitalize = function () {
 			}, function(data) {
 				var box;
 				if (!data.artist) {
-					console.log("here", data)
+					if (VERBOSE)
+						console.log("here", data)
 					box = new ErrorBox({ artist: artist, song: song }, data);
 				} else if (!data.song) {
 					var html = "<h2>We couldn't find {{song}}</h2><h3>But here's a list of songs by {{artist}}</h3>";
@@ -121,6 +122,7 @@ String.prototype.capitalize = function () {
 			return false;
 		};
 
+		// Stop scrolling animation.
 		$('body,html').bind('scroll mousedown DOMMouseScroll mousewheel keyup', function (e) {
 			if ( e.which > 0 || e.type == "mousedown" || e.type == "mousewheel"){
 				$("html,body").stop();
@@ -143,7 +145,8 @@ String.prototype.capitalize = function () {
 			return new SearchBar()
 
 		this.topArtists = null
-		var _this = this;
+		this.lastArtistValue = null
+		var _this = this
 
 		function _getTopArtists (callback, onerror) {
 			var monthlyRankURL = "http://www.vagalume.com.br/api/rank.php?\
@@ -154,78 +157,126 @@ String.prototype.capitalize = function () {
 					return onerror(data)
 				var top = data.art.month.internacional, artists = []
 				for (var i=0; i<top.length; i++)
-					artists.push(top[i].name);
+					artists.push(top[i].name)
 				callback(artists)
 			}
 
-			$.getJSON(monthlyRankURL, onData, onerror);
+			$.getJSON(monthlyRankURL, onData, onerror)
 		}
 
-		this.changeTypeahead = function (elem, obj) {
+		this.changeTypeaheadSource = function (elem, source) {
+			// Change list value.
 			if ($(elem).data('typeahead')) {
-				for (var p in obj)
-				if (obj.hasOwnProperty(p))
-					$(elem).data('typeahead')[p] = obj[p]
+				$(elem).data('typeahead').souce = source
 			} else {
-				console.log('typeahead didn\'t exist on', elem)
-				$(elem).typeahead(obj)
+				if (VERBOSE)
+					console.log('typeahead didn\'t exist on', elem)
+				$(elem).typeahead({'source': source})
+			}
+		}
+
+		this.updateTypeahead = function (elem, source) {
+			// Add items to list.
+			if ($(elem).data('typeahead')) {
+				var original = $(elem).data('typeahead').source;
+				for (var i=0; i<source.length; i++) {
+					for (var i2=0; i2<original.length; i2++) {
+						if (original[i2] === source[i]) {
+							break; // Name already exists in the original typeahead array.
+						}
+					}
+					if (i2 === original.length)
+						original.push(source[i]);
+				}
+				_this.changeTypeaheadSource(elem, { source: original })
+			} else {
+				if (VERBOSE)
+					console.log('typeahead didn\'t exist on', elem)
+				$(elem).typeahead({'source': source})
 			}
 		}
 
 		this.getTopArtists = function (callback, onerror) {
 			function onData (top) {
 				_this.topArtists = top
-				console.log('top artists is now [', top.length, ']', top)
+				if (VERBOSE)
+					console.log('top artists is now [', top.length, ']')// top)
 				callback(top)
 			}
 			function onError (data) {
-				console.debug('deu M...', data)
+				if (VERBOSE)
+					console.debug('deu M... ranking não foi achado', data)
 				if (typeof onerror !== 'undefined')
 					onerror(data)
 			}
-			if (this.topArtists)
-				callback(this.topArtists)
+			if (_this.topArtists)
+				callback(_this.topArtists)
 			else {
-				
-				// make call vagalume.js?
+				// Make it call vagalume.js?
 				_getTopArtists(onData, onError)
 			}
 		}
 
+		function checkActualArtistValue (event) {
+			// Tries to match the current value in the artist field with an
+			// actual artist's name to append it to the Typeahead list.
+ 			var input = document.querySelector("#search-artist")
+			if (input.value === _this.lastArtistValue)
+				return
+			else _this.lastArtistValue = input.value
+			
+			if (!input.value || /^\s*$/.test(input.value))
+				return // Blank artist!
+
+			vagalume.artistExists(input.value, function (match, data) {
+				if (data.art)
+					// Artist found or close match found => update list with matches.
+					_this.updateTypeahead($("#search-artist"), [data.art.name])
+			})
+		}
+
+		document.querySelector("#search-artist").addEventListener('keyup', checkActualArtistValue)
+		document.querySelector("#search-artist").addEventListener('input', checkActualArtistValue)
+		document.querySelector("#search-artist").addEventListener('paste', checkActualArtistValue)
+		document.querySelector("#search-artist").addEventListener('click', checkActualArtistValue)
+
 		document.querySelector("#search-artist").onfocus = function () {
 			_this.getTopArtists(function (list) {
-				_this.changeTypeahead($("#search-artist"), { source: list });
-			});
+				_this.updateTypeahead($("#search-artist"), list)
+			})
 		}
 
 		document.querySelector("#search-song").onfocus = function () {
-			var name = document.querySelector("#search-artist").value;
-			if (!name) {
-				_this.changeTypeahead($("#search-song"), { source: [] });
+			var name = document.querySelector("#search-artist").value
+			if (!name) { // Clear typeahead list.
+				_this.changeTypeaheadSource($("#search-song"), [])
+				return
 			}
 
 			function onData (bool) {
 				function onData (list) {
-					console.log('list of songs for', name, list);
-					_this.changeTypeahead($("#search-song"), { source: list.songs });
+					if (VERBOSE)
+						console.log('list of songs for', name, list)
+					_this.changeTypeaheadSource($("#search-song"), list.songs)
 				}
-				if (!bool) { // artist was not found
-					console.log('artist', name, 'not found');
-					_this.changeTypeahead($("#search-artist"), { source: [] });
+				if (!bool) { // Artist 404;
+					if (VERBOSE)
+						console.log('artist', name, 'not found')
+					_this.changeTypeaheadSource($("#search-artist"), [])
 					return;
 				}
 
-				vagalume.getArtistSongs(name, onData);				
+				vagalume.getArtistSongs(name, onData)
 			}
 
-			vagalume.artistExists(name, onData);
+			vagalume.artistExists(name, onData)
 		}
 
 		document.querySelector('form#searchbar').onsubmit = function () {
 			var artist = encodeURIComponent(document.querySelector('#search-artist').value);
 			var song = encodeURIComponent(document.querySelector('#search-song').value);
 			window.location.hash = '#!search:' + artist + ':' + song;
-			return false;
+			return false; // Prevent page reload.
 		}
 	}
 
@@ -563,7 +614,8 @@ String.prototype.capitalize = function () {
 			return new ListBox()
 
 		function renderHTML (artist, songs) {
-			console.log(artist, songs)
+			if (VERBOSE)
+				console.log(artist, songs)
 			var template = document.querySelector('#list-box-html').innerHTML
 				, html = Mustache.render(template, {
 					"artist-name": artist.name,
