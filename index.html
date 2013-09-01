@@ -6,9 +6,9 @@
     <meta charset='utf-8'>
 
     <meta http-equiv="content-language" content="en-us">
-    <meta name="author" content="Felipe Aragão, Gabriel Soldani">
-    <meta name="keywords" content="tweet, share, lyrics, twitter, verse, music, song, open-source, website">
-    <meta name="description" content="Twlyr is an open-source project to help users share their toughts through music - getting the lyrics right everytime!">
+    <meta name="author" content="Felipe Aragão Pires, Gabriel Soldani">
+    <meta name="keywords" content="tweet, share, lyrics, twitter, verse, music, song, open-source, website, Felipe Aragão Pires">
+    <meta name="description" content="Twlyr is an open-source project to help users share their thoughts through music - getting the lyrics right everytime!">
 
     <link href='css/bootstrap.css' rel='stylesheet' />
 	<link href='css/main.css' rel='stylesheet' />
@@ -36,7 +36,7 @@
 </head>
 <body>
 
-	<div class='version-strip'>version 1.0</div>
+	<a title="Fork us on Github!" href="https://github.com/f03lipe/twlyr/"><div class='version-strip'>version 1.0</div></a>
 	<div class='container face'>
 	    <a class='twlyr' href=''><span>Twlyr</span></a>
 		<h3 class='desc'>share a verse on Twitter!</h3>
@@ -46,7 +46,7 @@
 			<button type='submit' class='button red'>Search</button>
 		</form>
 		<footer>
-			2012 <span style='position: relative; top: 1px'>&reg;</span> created by <a href='http://twitter.com/f03lipe'>f03lipe</a> and <a href='http://twitter.com/gabrielsoldani'>@gabrielsoldani</a>
+			2012 <span style='position: relative; top: 1px'>&reg;</span> created by <a href='http://twitter.com/f03lipe'>@f03lipe</a> and <a href='http://twitter.com/gabrielsoldani'>@gabrielsoldani</a>
 		</footer>
 	</div>
 
@@ -80,11 +80,11 @@
                     </div>
                 </div>
 
-				<form onSubmit="return false;" class="customize-tweet" data-separator="♪">
+				<form onSubmit="return false;" class="customize-tweet" data-separator="♪" style="box-sizing:border-box">
                     <div class="select-separators">
                         <label>Choose a Verse Separator</label>
                         <div class="btn-group separators" data-toggle="buttons-radio">
-                            <button style="width: 25px" class="btn"></button>
+                            <button style="width: 25px; height: 28px" class="btn"></button>
                             <button class="btn active">♪</button>
                             <button class="btn">,</button>
                             <button class="btn">♫</button>
@@ -164,7 +164,7 @@
         <div class="separator"></div>
     </div>
 </script>
-<script id="list-box-html" type="text/html">
+<script id="list-box-html" type="text/template">
     <div class="box-wrapper">
 
         <div class="box lyrics-box">
@@ -202,7 +202,7 @@
         <div class="separsator"></div>
     </div>
 </script>
-<script id="error-box-html" type="text/html">
+<script id="error-box-html" type="text/template">
     <div class="box-wrapper">
         <div class="box error-box">
             {{#unknown-error}}

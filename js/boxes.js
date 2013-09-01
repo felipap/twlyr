@@ -392,7 +392,7 @@ String.prototype.capitalize = function () {
 
 				var sep, tweet;
 				sep = document.querySelector('.customize-tweet').dataset.separator
-				tweet = removeBrackets(makeAllLower(lpieces)).join(" "+sep+" ")
+				tweet = removeBrackets(makeAllLower(lpieces)).join(sep?" "+sep+" ":" ")
 				document.querySelector('textarea.tweet').value = tweet
 				updateTweetCounter()
 			}
